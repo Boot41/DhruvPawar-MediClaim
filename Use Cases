@@ -1,0 +1,104 @@
+1. Insurance Industry
+	Use Cases:
+
+	-Claims Approval Prediction
+
+	Parse claim forms, medical reports, and previous claim history to predict claim approval likelihood.
+
+	-Fraud Detection in Claims
+
+	Cross-reference submitted documents against external databases and previous records to detect inconsistencies.
+
+	-Policy Comparison & Recommendation
+
+	Analyze existing policies, compare with new offerings, and generate personalized recommendations.
+
+1. Industry Background
+
+Health Insurance Workflow involves:
+
+Submission – Policyholder uploads multiple documents (medical reports, invoices, prescriptions, diagnostic reports, prior authorization letters, etc.).
+
+Validation & Review – Insurer must ensure documents meet policy terms, coverage limits, and legal compliance.
+
+Approval Decision – Final decision made by a claims adjuster based on rules, medical evidence, and policy details.
+
+Key Challenge: Large document sets (20–30 pages) with highly technical, domain-specific language. Different formats (PDF, scanned images, structured forms) add complexity.
+
+2. Proper Use Case for MVP
+
+MVP Name: MedClaim AI Validator
+Core Purpose: Rapidly process, extract, cross-reference, and summarize health insurance claim documents while identifying potential gaps in eligibility.
+
+Features
+
+Multi-format Document Ingestion: PDFs, scans, and text documents.
+
+Context-Aware Summarization: Patient info, diagnosis, procedures, costs, policy coverage.
+
+Compliance Cross-Referencing: Checks against policy terms and medical necessity guidelines.
+
+Risk Flags: Highlights missing/invalid information or potential fraud indicators.
+
+(Optional) Claim Approval Prediction: Uses ML + rules to predict likelihood of approval, with confidence score.
+
+
+ ┌────────────────────────────┐
+ │     Policyholder Portal    │
+ │(Streamlit / Web Interface) │
+ │- Document Upload (PDFs)    │
+ │- View Processing Status     │
+ └──────────────┬─────────────┘
+                │
+                ▼
+ ┌────────────────────────────┐
+ │   Document Processing      │
+ │  (Flask / FastAPI Backend) │
+ │                            │
+ │ OCR: Tesseract / EasyOCR   │
+ │ Parsing: PDFPlumber/PyMuPDF│
+ │ Cleaning & NER: SpaCy      │
+ └──────────────┬─────────────┘
+                │
+                ▼
+ ┌────────────────────────────┐
+ │   Semantic Layer & KB      │
+ │                            │
+ │ Embeddings: Sentence-Trans │
+ │ Vector DB: FAISS           │
+ │ RAG Framework: Haystack    │
+ │ (Cross-Referencing w/ KB)  │
+ └──────────────┬─────────────┘
+                │
+                ▼
+ ┌────────────────────────────┐
+ │  Summarization Engine      │
+ │                            │
+ │ Longformer / Pegasus-X     │
+ │ Mistral 7B (Optional)      │
+ └──────────────┬─────────────┘
+                │
+                ▼
+ ┌────────────────────────────┐
+ │ Human-in-the-Loop Review   │
+ │                            │
+ │ Editable Summary (Streamlit│
+ │ UI with text editor)       │
+ └──────────────┬─────────────┘
+                │
+                ▼
+ ┌────────────────────────────┐
+ │ Final Report Generation    │
+ │                            │
+ │ ReportLab / Pandoc         │
+ │ Generates PDF for Insurer  │
+ └──────────────┬─────────────┘
+                │
+                ▼
+ ┌────────────────────────────┐
+ │ Insurance Team Review      │
+ │                            │
+ │ Final Approval Decision    │
+ │ Manual Verification Step   │
+ └────────────────────────────┘
+
