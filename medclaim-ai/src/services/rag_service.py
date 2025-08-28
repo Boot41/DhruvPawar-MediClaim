@@ -34,7 +34,7 @@ class MedClaimRAGService:
         vector_time = time.time() - vector_start
         self.logger.info(f"Vector store initialized in {vector_time:.2f} seconds")
         
-        # Initialize LLM
+        # Initialize LLM with optimized settings
         llm_start = time.time()
         self.logger.info(f"Initializing LLM: {self.settings.ollama_model}")
         self.llm = ChatOllama(
@@ -47,28 +47,25 @@ class MedClaimRAGService:
             num_threads=self.settings.num_threads,
             max_tokens=self.settings.max_tokens,
             streaming=self.settings.streaming,
+            # Performance optimizations
+            num_predict=self.settings.max_tokens,
+            repeat_penalty=1.1,
+            top_k=40,
+            top_p=0.9,
         )
         llm_time = time.time() - llm_start
         self.logger.info(f"LLM initialized in {llm_time:.2f} seconds")
         
-        # Create prompt template for medical claims
+        # Create optimized prompt template for medical claims
         self.prompt_template = PromptTemplate(
             input_variables=["context", "question"],
-            template="""You are a medical claims AI assistant. Use the provided context to answer questions about medical claims, policies, and procedures.
+            template="""Answer the medical claim question using only the provided context.
 
-Context from documents:
-{context}
+Context: {context}
 
 Question: {question}
 
-Instructions:
-- Only use information from the provided context
-- If the answer is not in the context, say "I cannot find this information in the provided documents"
-- For medical claims, focus on policy numbers, patient details, procedures, diagnosis codes, and claim amounts
-- Provide specific references to document sections when possible
-- Be precise and factual
-
-Answer:"""
+Answer concisely with specific details (policy numbers, amounts, codes) if available:"""
         )
         
         # Initialize QA chain and cache for filtered chains
