@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime, timedelta
 import uuid
-from schemas import ClaimCreate, ClaimUpdate, ClaimEstimateRequest, ClaimEstimateResponse, ClaimStatus
+from server.schemas.claim_schema import ClaimCreate, ClaimUpdate, ClaimResponse, ClaimEstimateRequest, ClaimEstimateResponse
+from server.schemas.base_schema import ClaimStatus
 
 
 class ClaimService:
@@ -16,7 +17,7 @@ class ClaimService:
     async def create_claim(self, db: Session, claim_data: ClaimCreate):
         """Create a new insurance claim"""
         try:
-            from models import Claim
+            from server.models.models import Claim
             
             claim = Claim(
                 id=uuid.uuid4(),
@@ -50,7 +51,7 @@ class ClaimService:
                         date_to: Optional[str] = None) -> Tuple[List, int]:
         """Get claims with filtering and pagination"""
         try:
-            from models import Claim
+            from server.models.models import Claim
             
             query = db.query(Claim)
             
@@ -82,7 +83,7 @@ class ClaimService:
     async def get_claim_by_id(self, db: Session, claim_id: uuid.UUID):
         """Get claim by ID"""
         try:
-            from models import Claim
+            from server.models.models import Claim
             
             claim = db.query(Claim).filter(Claim.id == claim_id).first()
             return claim
@@ -93,7 +94,7 @@ class ClaimService:
     async def update_claim(self, db: Session, claim_id: uuid.UUID, claim_update: ClaimUpdate):
         """Update claim by ID"""
         try:
-            from models import Claim
+            from server.models.models import Claim
             
             claim = db.query(Claim).filter(Claim.id == claim_id).first()
             if not claim:
@@ -118,7 +119,7 @@ class ClaimService:
     async def submit_claim(self, db: Session, claim_id: uuid.UUID):
         """Submit claim for processing"""
         try:
-            from models import Claim, ClaimStatusHistory
+            from server.models.models import Claim, ClaimStatusHistory
             
             claim = db.query(Claim).filter(Claim.id == claim_id).first()
             if not claim:
@@ -157,7 +158,7 @@ class ClaimService:
     async def process_claim(self, db: Session, claim_id: uuid.UUID, processor_id: uuid.UUID):
         """Process claim (agent/admin only)"""
         try:
-            from models import Claim, ClaimStatusHistory
+            from server.models.models import Claim, ClaimStatusHistory
             
             claim = db.query(Claim).filter(Claim.id == claim_id).first()
             if not claim:
@@ -201,7 +202,7 @@ class ClaimService:
     async def estimate_claim_coverage(self, db: Session, estimate_request: ClaimEstimateRequest) -> ClaimEstimateResponse:
         """Estimate claim coverage and patient responsibility"""
         try:
-            from models import User, InsurancePolicy
+            from server.models.models import User, InsurancePolicy
             
             # Get user and their insurance policy
             user = db.query(User).filter(User.id == estimate_request.user_id).first()
@@ -280,7 +281,7 @@ class ClaimService:
     async def get_claim_status_history(self, db: Session, claim_id: uuid.UUID) -> List[Dict[str, Any]]:
         """Get claim status history"""
         try:
-            from models import ClaimStatusHistory, User
+            from server.models.models import ClaimStatusHistory, User
             
             history = db.query(ClaimStatusHistory).filter(
                 ClaimStatusHistory.claim_id == claim_id
@@ -307,7 +308,7 @@ class ClaimService:
     async def appeal_claim(self, db: Session, claim_id: uuid.UUID, appeal_reason: str):
         """Appeal a denied claim"""
         try:
-            from models import Claim, ClaimStatusHistory, ClaimAppeal
+            from server.models.models import Claim, ClaimStatusHistory, ClaimAppeal
             
             claim = db.query(Claim).filter(Claim.id == claim_id).first()
             if not claim:
@@ -357,7 +358,7 @@ class ClaimService:
     async def _simulate_claim_processing(self, db: Session, claim):
         """Simulate claim processing logic"""
         try:
-            from models import ClaimStatusHistory
+            from server.models.models import ClaimStatusHistory
             import random
             
             # Simulate processing time

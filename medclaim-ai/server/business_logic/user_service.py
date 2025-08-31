@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 import uuid
 from passlib.context import CryptContext
-from server.schemas.schemas import UserCreate
+from server.schemas.user_schema import UserCreate
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from database import get_db
-from services import auth_service
-from business_logic import document_service
-from schemas import (
-    DocumentResponse, DocumentUpdate, DocumentUploadResponse,
-    ApiResponse, PaginatedResponse, DocumentType
+from server.config.database import get_db
+from server.services import auth_service
+from server.business_logic import document_service
+from server.schemas.document_schema import (
+    DocumentResponse, DocumentUpdate, DocumentUploadResponse
 )
+from server.schemas.base_schema import ApiResponse, PaginatedResponse, DocumentType
 import uuid
 
 router = APIRouter(prefix="/documents", tags=["Documents"])

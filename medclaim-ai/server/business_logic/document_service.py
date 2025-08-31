@@ -12,7 +12,8 @@ import shutil
 from pathlib import Path
 from fastapi import UploadFile
 from fastapi.responses import FileResponse
-from schemas import DocumentUpdate, DocumentType, DocumentUploadResponse
+from server.schemas.document_schema import DocumentResponse, DocumentUpdate, DocumentUploadResponse
+from server.schemas.base_schema import DocumentType
 
 
 class DocumentService:
@@ -54,7 +55,7 @@ class DocumentService:
                 shutil.copyfileobj(file.file, buffer)
             
             # Create document record
-            from models import Document
+            from server.models.models import Document
             
             document = Document(
                 id=uuid.uuid4(),
@@ -105,7 +106,7 @@ class DocumentService:
                           is_verified: Optional[bool] = None) -> Tuple[List, int]:
         """Get documents with filtering and pagination"""
         try:
-            from models import Document
+            from server.models.models import Document
             
             query = db.query(Document)
             
@@ -137,7 +138,7 @@ class DocumentService:
     async def get_document_by_id(self, db: Session, document_id: uuid.UUID):
         """Get document by ID"""
         try:
-            from models import Document
+            from server.models.models import Document
             
             document = db.query(Document).filter(Document.id == document_id).first()
             return document
@@ -148,7 +149,7 @@ class DocumentService:
     async def update_document(self, db: Session, document_id: uuid.UUID, document_update: DocumentUpdate):
         """Update document metadata"""
         try:
-            from models import Document
+            from server.models.models import Document
             
             document = db.query(Document).filter(Document.id == document_id).first()
             if not document:
@@ -173,7 +174,7 @@ class DocumentService:
     async def delete_document(self, db: Session, document_id: uuid.UUID) -> bool:
         """Delete document and its file"""
         try:
-            from models import Document
+            from server.models.models import Document
             
             document = db.query(Document).filter(Document.id == document_id).first()
             if not document:
@@ -196,7 +197,7 @@ class DocumentService:
     async def reprocess_document(self, db: Session, document_id: uuid.UUID):
         """Reprocess document with AI extraction"""
         try:
-            from models import Document
+            from server.models.models import Document
             
             document = db.query(Document).filter(Document.id == document_id).first()
             if not document:
@@ -238,7 +239,7 @@ class DocumentService:
     async def verify_document(self, db: Session, document_id: uuid.UUID, verifier_id: uuid.UUID):
         """Verify document extraction (agent/admin only)"""
         try:
-            from models import Document
+            from server.models.models import Document
             
             document = db.query(Document).filter(Document.id == document_id).first()
             if not document:

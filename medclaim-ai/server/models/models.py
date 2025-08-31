@@ -2,15 +2,15 @@ from sqlalchemy import Column, String, Integer, Float, DateTime, JSON, ForeignKe
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
-from database import Base
+from server.config.database import Base
 import uuid
 import enum
 
 # Enums for better data integrity
-class UserRole(enum.Enum):
-    ADMIN = "admin"
-    AGENT = "agent"
-    CUSTOMER = "customer"
+class UserRole(str, enum.Enum):
+    admin = "admin"
+    agent = "agent"
+    customer = "customer"
 
 class DocumentType(enum.Enum):
     MEDICAL_BILL = "medical_bill"
@@ -49,8 +49,10 @@ class User(Base):
     last_name = Column(String(100), nullable=False)
     date_of_birth = Column(Date)
     address = Column(Text)
-    role = Column(Enum(UserRole), default=UserRole.CUSTOMER)
+    role = Column(Enum(UserRole), default=UserRole.customer)
     is_active = Column(Boolean, default=True)
+    password_hash = Column(String(255), nullable=False)
+    last_login = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -270,7 +272,7 @@ class ConversationMessage(Base):
     role = Column(String(20), nullable=False)  # user, assistant, system
     message_type = Column(String(50), default="text")  # text, image, file, estimate
     content = Column(Text, nullable=False)
-    metadata = Column(JSON)  # Store additional data like AI confidence, extracted entities
+    metadata_json = Column("metadata", JSON)  # Store additional data like AI confidence, extracted entities
     parent_message_id = Column(UUID(as_uuid=True), ForeignKey("conversation_messages.id"))
     is_flagged = Column(Boolean, default=False)  # For moderation
     created_at = Column(DateTime, default=datetime.utcnow)

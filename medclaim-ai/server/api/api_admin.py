@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from database import get_db, check_db_connection
-from schemas import HealthCheckResponse, ApiResponse
-from services import gemini_service, auth_service
-from business_logic import admin_service
+from server.config.database import get_db, check_db_connection
+from server.schemas.base_schema import HealthCheckResponse, ApiResponse
+from server.services import gemini_service, auth_service
+from server.business_logic import admin_service
 import os
 
-router = APIRouter(prefix="/admin", tags=["Administration"])
+router = APIRouter(prefix="/admin", tags=["Admin"])
 
 # ============================================================================
 # HEALTH CHECK ENDPOINTS

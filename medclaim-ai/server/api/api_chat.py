@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Field
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import Field
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from database import get_db
-from services import auth_service
-from business_logic import chat_service
-from schemas import (
-    ChatMessage, ChatResponse, ConversationMessageResponse,
-    ApiResponse, PaginatedResponse
+from server.config.database import get_db
+from server.services import auth_service
+from server.business_logic import chat_service
+from server.schemas.conversation_schema import (
+    ChatMessage, ChatResponse, ConversationMessageResponse
 )
+from server.schemas.base_schema import ApiResponse, PaginatedResponse
 import uuid
 
 router = APIRouter(prefix="/chat", tags=["AI Chat Assistant"])
@@ -182,9 +183,9 @@ async def get_chat_suggestions(
 
 @router.post("/feedback", response_model=ApiResponse)
 async def submit_chat_feedback(
-    message_id: uuid.UUID,
-    rating: int = Field(..., ge=1, le=5),
-    feedback: Optional[str] = None,
+    message_id: uuid.UUID = Query(...),
+    rating: int = Query(..., ge=1, le=5),
+    feedback: Optional[str] = Query(None),
     current_user = Depends(auth_service.get_current_user),
     db: Session = Depends(get_db)
 ):

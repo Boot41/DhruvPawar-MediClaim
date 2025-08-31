@@ -7,22 +7,31 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Database configuration
+# Database configuration - using SQLite for local development
 DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "postgresql://username:password@localhost:5432/health_insurance_db"
+    "sqlite:///./health_insurance.db"
 )
 
-# Create engine with connection pooling
-engine = create_engine(
-    DATABASE_URL,
-    echo=os.getenv("SQL_ECHO", "false").lower() == "true",  # Enable SQL logging in development
-    pool_size=20,
-    max_overflow=30,
-    pool_timeout=30,
-    pool_recycle=1800,
-    pool_pre_ping=True
-)
+# Create engine with appropriate settings for SQLite
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        DATABASE_URL,
+        echo=os.getenv("SQL_ECHO", "false").lower() == "true",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool
+    )
+else:
+    # PostgreSQL configuration
+    engine = create_engine(
+        DATABASE_URL,
+        echo=os.getenv("SQL_ECHO", "false").lower() == "true",
+        pool_size=20,
+        max_overflow=30,
+        pool_timeout=30,
+        pool_recycle=1800,
+        pool_pre_ping=True
+    )
 
 # Session factory
 SessionLocal = sessionmaker(

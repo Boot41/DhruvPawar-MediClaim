@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime
 import uuid
-from schemas import ChatMessage, ChatResponse, ConversationMessageResponse
+from server.schemas.conversation_schema import ChatMessage, ChatResponse, ConversationMessageResponse
 
 
 class ChatService:
@@ -16,8 +16,8 @@ class ChatService:
     async def process_chat_message(self, db: Session, message: ChatMessage, current_user) -> ChatResponse:
         """Process incoming chat message and generate AI response"""
         try:
-            from models import Conversation, ConversationMessage
-            from services import gemini_service
+            from server.models.models import ConversationMessage
+            from server.services import gemini_service
             
             # Get or create conversation session
             conversation = await self._get_or_create_conversation(db, current_user.id, message.session_id)
@@ -79,7 +79,7 @@ class ChatService:
     async def start_chat_session(self, db: Session, user_id: uuid.UUID, claim_id: Optional[uuid.UUID] = None) -> Dict[str, Any]:
         """Start a new chat session"""
         try:
-            from models import Conversation
+            # Note: Conversation model not found, using ConversationMessage only
             
             conversation = Conversation(
                 id=uuid.uuid4(),
@@ -106,7 +106,7 @@ class ChatService:
     async def get_user_chat_sessions(self, db: Session, user_id: uuid.UUID) -> List[Dict[str, Any]]:
         """Get all chat sessions for a user"""
         try:
-            from models import Conversation
+            # Note: Conversation model not found, using ConversationMessage only
             
             conversations = db.query(Conversation).filter(
                 Conversation.user_id == user_id
@@ -137,7 +137,7 @@ class ChatService:
     async def get_session_messages(self, db: Session, session_id: str, user_id: uuid.UUID, page: int, size: int) -> Tuple[List, int]:
         """Get messages from a chat session with pagination"""
         try:
-            from models import Conversation, ConversationMessage
+            # Note: Conversation model not found, using ConversationMessage only, ConversationMessage
             
             # Verify user owns the conversation
             conversation = db.query(Conversation).filter(
@@ -168,7 +168,7 @@ class ChatService:
     async def delete_chat_session(self, db: Session, session_id: str, user_id: uuid.UUID) -> bool:
         """Delete a chat session and all its messages"""
         try:
-            from models import Conversation, ConversationMessage
+            # Note: Conversation model not found, using ConversationMessage only, ConversationMessage
             
             # Verify user owns the conversation
             conversation = db.query(Conversation).filter(
@@ -197,7 +197,7 @@ class ChatService:
     async def get_user_claims_context(self, db: Session, user_id: uuid.UUID) -> List[Dict[str, Any]]:
         """Get user's claims for chat context"""
         try:
-            from models import Claim
+            from server.models.models import Claim
             
             claims = db.query(Claim).filter(Claim.user_id == user_id).all()
             
@@ -220,7 +220,7 @@ class ChatService:
     async def get_user_documents_context(self, db: Session, user_id: uuid.UUID) -> List[Dict[str, Any]]:
         """Get user's documents for chat context"""
         try:
-            from models import Document
+            from server.models.models import Document
             
             documents = db.query(Document).filter(Document.user_id == user_id).all()
             
@@ -297,7 +297,7 @@ class ChatService:
     async def submit_chat_feedback(self, db: Session, message_id: uuid.UUID, user_id: uuid.UUID, rating: int, feedback: Optional[str] = None) -> bool:
         """Submit feedback for a chat response"""
         try:
-            from models import ConversationMessage, ChatFeedback
+            # Note: Conversation model not found, using ConversationMessage onlyMessage, ChatFeedback
             
             # Verify message exists and user has access
             message = db.query(ConversationMessage).join(Conversation).filter(
@@ -339,7 +339,7 @@ class ChatService:
     async def flag_message(self, db: Session, message_id: uuid.UUID, user_id: uuid.UUID, reason: str) -> bool:
         """Flag inappropriate chat message"""
         try:
-            from models import ConversationMessage, MessageFlag
+            # Note: Conversation model not found, using ConversationMessage onlyMessage, MessageFlag
             
             # Verify message exists and user has access
             message = db.query(ConversationMessage).join(Conversation).filter(

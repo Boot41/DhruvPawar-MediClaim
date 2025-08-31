@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from database import get_db
-from services import auth_service
-from business_logic import claim_service
-from schemas import (
-    ClaimCreate, ClaimUpdate, ClaimResponse, ClaimEstimateRequest, ClaimEstimateResponse,
-    ApiResponse, PaginatedResponse, ClaimStatus
+from server.config.database import get_db
+from server.services import auth_service
+from server.business_logic import claim_service
+from server.schemas.claim_schema import (
+    ClaimCreate, ClaimUpdate, ClaimResponse, ClaimEstimateRequest, ClaimEstimateResponse
 )
+from server.schemas.base_schema import ApiResponse, PaginatedResponse, ClaimStatus
 import uuid
 
 router = APIRouter(prefix="/claims", tags=["Claims"])

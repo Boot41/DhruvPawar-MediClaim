@@ -4,9 +4,10 @@ from sqlalchemy.orm import Session
 from server.config.database import get_db
 from server.business_logic import user_service
 from server.services import auth_service
-from server.schemas.schemas import (
-    UserCreate, UserLogin, UserResponse, UserProfile, ApiResponse
+from server.schemas.user_schema import (
+    UserCreate, UserLogin, UserResponse, UserProfile
 )
+from server.schemas.base_schema import ApiResponse
 
 router = APIRouter(prefix="/users", tags=["Users"])
 

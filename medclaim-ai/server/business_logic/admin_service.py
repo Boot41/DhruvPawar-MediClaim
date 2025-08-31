@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 from typing import Dict, Any, List, Optional
 import os
 from datetime import datetime, timedelta
-from database import check_db_connection
-from services import gemini_service
+from server.config.database import check_db_connection
+from server.services import gemini_service
 
 
 class AdminService:
@@ -18,7 +18,7 @@ class AdminService:
         """Get comprehensive system overview statistics"""
         try:
             # Get basic counts from database
-            from models import User, Claim, Document  # Import here to avoid circular imports
+            from server.models.models import User, Claim, Document  # Import here to avoid circular imports
             
             total_users = db.query(User).count()
             active_users = db.query(User).filter(User.is_active == True).count()
@@ -54,7 +54,7 @@ class AdminService:
     async def get_user_statistics(self, db: Session) -> Dict[str, Any]:
         """Get detailed user statistics"""
         try:
-            from models import User
+            from server.models.models import User
             
             # Get user counts by role
             user_roles = db.query(User.role, db.func.count(User.id)).group_by(User.role).all()
@@ -78,7 +78,7 @@ class AdminService:
     async def get_claim_statistics(self, db: Session) -> Dict[str, Any]:
         """Get detailed claim statistics"""
         try:
-            from models import Claim
+            from server.models.models import Claim
             
             # Get claim counts by status
             claim_statuses = db.query(Claim.status, db.func.count(Claim.id)).group_by(Claim.status).all()
@@ -110,7 +110,7 @@ class AdminService:
     async def get_document_statistics(self, db: Session) -> Dict[str, Any]:
         """Get detailed document processing statistics"""
         try:
-            from models import Document
+            from server.models.models import Document
             
             # Get document counts by type
             doc_types = db.query(Document.document_type, db.func.count(Document.id)).group_by(Document.document_type).all()
@@ -142,7 +142,7 @@ class AdminService:
     async def cleanup_old_files(self, db: Session, days: int = 30) -> Dict[str, Any]:
         """Clean up old temporary files and orphaned records"""
         try:
-            from models import Document
+            from server.models.models import Document
             import os
             from pathlib import Path
             
@@ -184,7 +184,7 @@ class AdminService:
     async def reprocess_failed_documents(self, db: Session) -> Dict[str, Any]:
         """Reprocess documents that failed initial processing"""
         try:
-            from models import Document
+            from server.models.models import Document
             
             # Find failed documents
             failed_docs = db.query(Document).filter(
@@ -223,7 +223,7 @@ class AdminService:
     async def get_system_config(self, db: Session) -> Dict[str, Any]:
         """Get current system configuration"""
         try:
-            from models import SystemConfig
+            from server.models.models import SystemConfig
             
             # Get all configuration settings
             configs = db.query(SystemConfig).all()
@@ -245,7 +245,7 @@ class AdminService:
     async def update_system_config(self, db: Session, config_updates: Dict[str, Any]) -> Dict[str, Any]:
         """Update system configuration settings"""
         try:
-            from models import SystemConfig
+            from server.models.models import SystemConfig
             
             updated_configs = {}
             
