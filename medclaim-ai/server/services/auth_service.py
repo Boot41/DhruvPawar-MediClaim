@@ -83,8 +83,15 @@ class AuthService:
         if not user_id:
             raise HTTPException(status_code=401, detail="Invalid token")
 
+        # Convert string to UUID
+        try:
+            import uuid
+            user_uuid = uuid.UUID(user_id)
+        except ValueError:
+            raise HTTPException(status_code=401, detail="Invalid user ID format")
+
         from server.business_logic.user_service import user_service
-        user = await user_service.get_user_by_id(db, user_id)
+        user = await user_service.get_user_by_id(db, user_uuid)
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
         if not user.is_active:

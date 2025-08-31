@@ -141,6 +141,7 @@ class Document(Base):
     is_verified = Column(Boolean, default=False)  # Human verification
     upload_source = Column(String(50), default="web")  # web, mobile, email, etc.
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  # <-- Added
 
     # Relationships
     user = relationship("User", back_populates="documents")

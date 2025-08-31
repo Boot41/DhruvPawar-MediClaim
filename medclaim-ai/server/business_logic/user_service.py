@@ -52,7 +52,7 @@ class UserService:
         from server.models.models import User
         return db.query(User).filter(User.email == email).first()
 
-    async def get_user_by_id(self, db: Session, user_id: str):
+    async def get_user_by_id(self, db: Session, user_id):
         """Retrieve user by ID"""
         from server.models.models import User
         return db.query(User).filter(User.id == user_id).first()
