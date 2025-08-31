@@ -24,17 +24,8 @@ async def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=ApiResponse)
 async def login_user(login_data: UserLogin, db: Session = Depends(get_db)):
-    try:
-        token_data = await auth_service.authenticate_user(
-            db, login_data.email, login_data.password
-        )
-        return ApiResponse(
-            success=True,
-            message="Login successful",
-            data=token_data
-        )
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+    token_data = await auth_service.authenticate_user(db, login_data.email, login_data.password)
+    return ApiResponse(success=True, message="Login successful", data=token_data)
 
 @router.get("/profile", response_model=UserProfile)
 async def get_user_profile(current_user=Depends(auth_service.get_current_user)):
