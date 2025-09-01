@@ -28,4 +28,7 @@ class DocumentOrchestrator:
         extracted_data = await self.gemini_agent.extract(preprocessed_path)
         verified_data = await self.verification_agent.verify(extracted_data)
         return verified_data
-document_agent_orchestrator = DocumentOrchestrator()
+document_orchestrator = DocumentOrchestrator()
+
+async def document_agent_orchestrator(file_path: Path, file_ext: str):
+    return await document_orchestrator.process_document(file_path)

@@ -5,6 +5,6 @@ def read_text_file(file_path: Path) -> str:
     with open(file_path, "r", encoding="utf-8") as f:
         return f.read()
 
-def clean_text(text: str) -> str:
+def clean_text_file(text: str) -> str:
     """Basic cleanup: remove extra spaces, newlines"""
     return " ".join(text.split())
