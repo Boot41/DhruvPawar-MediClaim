@@ -7,7 +7,7 @@ from server.services import gemini_service, auth_service
 from server.business_logic import admin_service
 import os
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(prefix="", tags=["Admin"])
 
 # ============================================================================
 # HEALTH CHECK ENDPOINTS

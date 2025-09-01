@@ -9,7 +9,7 @@ from server.schemas.user_schema import (
 )
 from server.schemas.base_schema import ApiResponse
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter(prefix="", tags=["Users"])
 
 @router.post("/register", response_model=ApiResponse)
 async def register_user(user_data: UserCreate, db: Session = Depends(get_db)):

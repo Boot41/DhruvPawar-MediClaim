@@ -10,7 +10,7 @@ from server.schemas.claim_schema import (
 from server.schemas.base_schema import ApiResponse, PaginatedResponse, ClaimStatus
 import uuid
 
-router = APIRouter(prefix="/claims", tags=["Claims"])
+router = APIRouter(prefix="", tags=["Claims"])
 
 # ============================================================================
 # CLAIM MANAGEMENT ENDPOINTS

@@ -11,7 +11,7 @@ from server.schemas.conversation_schema import (
 from server.schemas.base_schema import ApiResponse, PaginatedResponse
 import uuid
 
-router = APIRouter(prefix="/chat", tags=["AI Chat Assistant"])
+router = APIRouter(prefix="", tags=["AI Chat Assistant"])
 
 # ============================================================================
 # CHAT ENDPOINTS

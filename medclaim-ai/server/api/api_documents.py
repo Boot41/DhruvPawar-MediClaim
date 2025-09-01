@@ -10,7 +10,7 @@ from server.schemas.document_schema import (
 from server.schemas.base_schema import ApiResponse, PaginatedResponse, DocumentType
 import uuid
 
-router = APIRouter(prefix="/documents", tags=["Documents"])
+router = APIRouter(prefix="", tags=["Documents"])
 
 # ============================================================================
 # DOCUMENT UPLOAD ENDPOINTS
