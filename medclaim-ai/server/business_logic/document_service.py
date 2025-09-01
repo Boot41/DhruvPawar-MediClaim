@@ -11,7 +11,7 @@ from server.schemas.document_schema import DocumentResponse, DocumentUpdate, Doc
 from server.schemas.base_schema import DocumentType
 
 # Import orchestrator agent
-from server.agents.orchestrator import document_agent_orchestrator
+from server.orchestrator.adk_workflow import ADKDocumentPipeline
 
 
 class AsyncDocumentService:
@@ -69,13 +69,14 @@ class AsyncDocumentService:
             await db.refresh(doc)
 
             # Process document via agent orchestrator
-            extracted_data = await document_agent_orchestrator(file_path, file_ext)
+            pipeline = ADKDocumentPipeline()
+            extracted_data = await pipeline.run(file_path, policy_clauses="")
 
             # Update DB
             doc.extracted_data = extracted_data
             doc.is_processed = True
-            doc.processing_completed_at = datetime.utcnow()
-            doc.updated_at = datetime.utcnow()
+            doc.processing_completed_at = datetime.now()
+            doc.updated_at = datetime.now()
             await db.commit()
             await db.refresh(doc)
 

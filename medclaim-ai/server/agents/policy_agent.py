@@ -16,6 +16,15 @@ Be concise and return valid JSON only.
 Extracted: $extracted
 PolicyClauses: $clauses
 """)
+def extract_policy_clauses(policy_path: str) -> str:
+    """
+    Reads a policy PDF/DOCX and returns key clauses as plain text.
+    """
+    md_path = convert_pdf_to_markdown(policy_path)  # reuse your pdf_agent
+    with open(md_path, "r") as f:
+        text = f.read()
+    # Optionally, summarize or extract relevant sections with Gemini
+    return text
 
 async def reason_policy_tool(extracted_json: dict[str, any], policy_clauses: str) -> dict[str, any]:
     extracted_str = json.dumps(extracted_json)

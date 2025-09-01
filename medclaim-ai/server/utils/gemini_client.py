@@ -65,7 +65,7 @@ class GeminiClient:
         return await self.generate_text(prompt)
 gemini_client = GeminiClient()
 
-async def call_gemini(prompt: str, model: str = "gemini-1.5-pro", max_tokens: int = 1024) -> Dict[str, Any]:
+async def call_gemini(prompt: str, model: str = "gemini-2.0-flash", max_tokens: int = 1024) -> Dict[str, Any]:
     text = await gemini_client.generate_text(prompt, max_output_tokens=max_tokens)
     return {"text": text}
 

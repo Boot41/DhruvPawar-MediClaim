@@ -20,7 +20,7 @@ class ChatbotAgent:
       - call run_pipeline_tool to process a file when requested
     """
 
-    def __init__(self, model: str = "gemini-1.5-pro"):
+    def __init__(self, model: str = "gemini-2.0-flash"):
         self.model = model
 
     async def respond(self, user_input: str, call_pipeline: bool = False, file_path: Optional[str] = None,
