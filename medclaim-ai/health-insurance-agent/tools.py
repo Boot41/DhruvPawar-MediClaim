@@ -76,7 +76,19 @@ def eligibility_api_tool(procedure_codes: List[str], policy_number: str) -> Dict
     Validates if given procedure codes are covered under the policy.
     """
     # Mock covered procedures
-    covered = {"99213": 100, "80053": 80}
+    covered = {
+    "99213": {"name": "Office or other outpatient visit", "coverage": 100},
+    "80053": {"name": "Comprehensive metabolic panel", "coverage": 80},
+    "93000": {"name": "Electrocardiogram", "coverage": 90},
+    "36415": {"name": "Collection of venous blood", "coverage": 100},
+    "85025": {"name": "Complete blood count", "coverage": 90},
+    "84443": {"name": "Thyroid stimulating hormone", "coverage": 85},
+    "93010": {"name": "Electrocardiogram interpretation", "coverage": 80},
+    "90791": {"name": "Psychiatric diagnostic evaluation", "coverage": 70},
+    "71020": {"name": "Chest X-ray", "coverage": 90},
+    "99214": {"name": "Office or other outpatient visit (extended)", "coverage": 100},
+    "70551": {"name": "MRI Scan", "coverage": 90},
+}
     results = []
     for code in procedure_codes:
         coverage = covered.get(code, 0)
