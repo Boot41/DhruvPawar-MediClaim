@@ -133,7 +133,7 @@ def eligibility_api_tool(procedure_codes: List[str], policy_number: str) -> Dict
         coverage = covered.get(code, 0)
         results.append({"procedure_code": code, "covered": bool(coverage), "coverage_percentage": coverage})
     return {"results": results}
-
+###############################################################################################
 # Tool: Generate filled claim form
 def form_generation_tool(patient_data: dict, medical_data: dict, policy_data: dict) -> Dict:
     """
