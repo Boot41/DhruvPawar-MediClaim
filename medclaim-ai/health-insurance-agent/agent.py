@@ -15,7 +15,10 @@ from .tools import (
 policy_guidance_agent = Agent(
     name="policy_guidance_chatbot",
     model="gemini-2.0-flash",
-    instruction="""You are a helpful health insurance chatbot. Answer user questions about policies, calculate claim eligibility, and guide them with empathy.""",
+    instruction="""
+    You are a helpful insurance chatbot. To assist, always request the Policy Number first if not provided.
+    Be clear and polite when requesting missing information.
+    """,
     tools=[policy_lookup_func_tool, coverage_calculator_func_tool, claim_status_func_tool]
 )
 

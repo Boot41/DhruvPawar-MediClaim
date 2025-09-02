@@ -2,8 +2,10 @@
 from typing import Dict, List
 import re
 from google.adk.tools import FunctionTool
+import requests
 
 # Tool: Lookup policy details
+#BACKEND_API_URL = "http://localhost:8000"
 def policy_lookup_tool(policy_number: str, user_id: str) -> Dict:
     """
     Retrieves policy details given a policy number and user ID.
@@ -11,6 +13,7 @@ def policy_lookup_tool(policy_number: str, user_id: str) -> Dict:
     # Mock policy database; replace with real API/database
     mock_policies = {
         "POL123456": {
+            "user_id":"user001",
             "policyholder_name": "John Doe",
             "coverage_limit": 500000,
             "deductible": 2500,
@@ -19,10 +22,20 @@ def policy_lookup_tool(policy_number: str, user_id: str) -> Dict:
             "policy_status": "active",
             "premium": 1200,
             "family_members": ["John Doe", "Jane Doe"]
+        },
+        "POL789012": {
+            "user_id":"user002",
+            "policyholder_name": "Dhruv Pawar",
+            "coverage_limit": 100000,
+            "deductible": 5000,
+            "copay_percentage": 25,
+            "coverage_types": ["hospitalization", "outpatient", "prescription", "diagnostic"],
+            "policy_status": "active",
+            "premium": 1500,
+            "family_members": ["Vreen Pawar", "Jane Doe", "John Doe"]
         }
     }
     return mock_policies.get(policy_number, {"error": "Policy not found"})
-
 # Tool: Calculate coverage and out-of-pocket
 def coverage_calculator_tool(treatment_cost: float, policy_number: str) -> Dict:
     """
