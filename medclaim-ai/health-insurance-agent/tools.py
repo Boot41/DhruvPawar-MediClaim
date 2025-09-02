@@ -1,9 +1,8 @@
 # health_insurance_agent/tools.py
 from typing import Dict, List
 import re
-from google.adk.tools import FunctionTool
+from google.adk.tools import FunctionTool, google_search
 import requests
-
 # Tool: Lookup policy details
 #BACKEND_API_URL = "http://localhost:8000"
 def policy_lookup_tool(policy_number: str, user_id: str) -> Dict:

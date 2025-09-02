@@ -10,15 +10,19 @@ from .tools import (
     insurance_api_func_tool,
     claim_status_func_tool
 )
+from .instructions import (
+    policy_guidance_instruction,
+    document_analyzer_instruction,
+    coverage_eligibility_instruction,
+    claim_processor_instruction,
+    system_coordinator_instruction
+)
 
 # Policy Guidance Chatbot Agent
 policy_guidance_agent = Agent(
     name="policy_guidance_chatbot",
     model="gemini-2.0-flash",
-    instruction="""
-    You are a helpful insurance chatbot. To assist, always request the Policy Number first if not provided.
-    Be clear and polite when requesting missing information.
-    """,
+    instruction=policy_guidance_instruction,
     tools=[policy_lookup_func_tool, coverage_calculator_func_tool, claim_status_func_tool]
 )
 
@@ -26,7 +30,7 @@ policy_guidance_agent = Agent(
 document_analyzer_agent = Agent(
     name="medical_document_analyzer",
     model="gemini-2.0-flash",
-    instruction="""Extract and validate information from medical bills and documents, using OCR and eligibility tools.""",
+    instruction=document_analyzer_instruction,
     tools=[ocr_func_tool, eligibility_func_tool]
 )
 
@@ -34,7 +38,7 @@ document_analyzer_agent = Agent(
 claim_processor_agent = Agent(
     name="claim_form_processor",
     model="gemini-2.0-flash",
-    instruction="""Auto-generate and submit claim forms; validate all data before submission.""",
+    instruction=claim_processor_instruction,
     tools=[form_generation_func_tool, insurance_api_func_tool]
 )
 
@@ -42,7 +46,7 @@ claim_processor_agent = Agent(
 coverage_eligibility_agent = Agent(
     name="coverage_eligibility_validator",
     model="gemini-2.0-flash",
-    instruction="""Check policy coverage, validate eligibility, and calculate claim amounts.""",
+    instruction=coverage_eligibility_instruction,
     tools=[eligibility_func_tool, coverage_calculator_func_tool]
 )
 
@@ -50,15 +54,7 @@ coverage_eligibility_agent = Agent(
 root_agent = Agent(
     name="system_coordinator",
     model="gemini-2.0-flash",
-    instruction="""
-    You are the orchestrator for the Health Insurance Claim Assistant.
-    Route requests to the appropriate specialized agent:
-      - Chatbot: policy questions
-      - Document Analyzer: uploads
-      - Claim Processor: new claims
-      - Coverage Validator: eligibility and calculations
-    Aggregate multi-step workflows for the user.
-    """,
+    instruction=system_coordinator_instruction,
     tools=[
         agent_tool.AgentTool(agent=policy_guidance_agent),
         agent_tool.AgentTool(agent=document_analyzer_agent),
