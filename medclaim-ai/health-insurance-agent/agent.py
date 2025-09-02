@@ -2,10 +2,10 @@
 from google.adk.agents import Agent
 from google.adk.tools import agent_tool
 from .tools import (
-    policy_lookup_func_tool,
-    coverage_calculator_func_tool,
+    policy_extract_func_tool,
+    invoice_extract_func_tool,
     ocr_func_tool,
-    eligibility_func_tool,
+    coverage_calc_func_tool,
     form_generation_func_tool,
     insurance_api_func_tool,
     claim_status_func_tool
@@ -18,39 +18,39 @@ from .instructions import (
     system_coordinator_instruction
 )
 
-# Policy Guidance Chatbot Agent
+# 1. Policy Guidance Agent
 policy_guidance_agent = Agent(
-    name="policy_guidance_chatbot",
+    name="policy_guidance_agent",
     model="gemini-2.0-flash",
     instruction=policy_guidance_instruction,
-    tools=[policy_lookup_func_tool, coverage_calculator_func_tool, claim_status_func_tool]
+    tools=[policy_extract_func_tool, coverage_calc_func_tool, claim_status_func_tool]
 )
 
-# Medical Document Analyzer Agent
+# 2. Medical Document Analyzer Agent
 document_analyzer_agent = Agent(
     name="medical_document_analyzer",
     model="gemini-2.0-flash",
     instruction=document_analyzer_instruction,
-    tools=[ocr_func_tool, eligibility_func_tool]
+    tools=[ocr_func_tool, invoice_extract_func_tool]
 )
 
-# Claim Form Processor Agent
+# 3. Coverage Eligibility Agent
+coverage_eligibility_agent = Agent(
+    name="coverage_eligibility_agent",
+    model="gemini-2.0-flash",
+    instruction=coverage_eligibility_instruction,
+    tools=[policy_extract_func_tool, coverage_calc_func_tool]
+)
+
+# 4. Claim Form Processor Agent
 claim_processor_agent = Agent(
     name="claim_form_processor",
     model="gemini-2.0-flash",
     instruction=claim_processor_instruction,
-    tools=[form_generation_func_tool, insurance_api_func_tool]
+    tools=[form_generation_func_tool, insurance_api_func_tool, claim_status_func_tool]
 )
 
-# Coverage Eligibility Validator Agent
-coverage_eligibility_agent = Agent(
-    name="coverage_eligibility_validator",
-    model="gemini-2.0-flash",
-    instruction=coverage_eligibility_instruction,
-    tools=[eligibility_func_tool, coverage_calculator_func_tool]
-)
-
-# System Coordinator Agent (Orchestrator)
+# 5. System Coordinator Agent (Orchestrator)
 root_agent = Agent(
     name="system_coordinator",
     model="gemini-2.0-flash",
@@ -58,7 +58,7 @@ root_agent = Agent(
     tools=[
         agent_tool.AgentTool(agent=policy_guidance_agent),
         agent_tool.AgentTool(agent=document_analyzer_agent),
-        agent_tool.AgentTool(agent=claim_processor_agent),
-        agent_tool.AgentTool(agent=coverage_eligibility_agent)
+        agent_tool.AgentTool(agent=coverage_eligibility_agent),
+        agent_tool.AgentTool(agent=claim_processor_agent)
     ]
 )
