@@ -62,13 +62,53 @@ def coverage_calculator_tool(treatment_cost: float, policy_number: str) -> Dict:
     }
 
 # Tool: Analyze uploaded medical bill (simulate OCR)
-def ocr_tool(document_text: str) -> Dict:
+#def ocr_tool(document_text: str) -> Dict:
+#    """
+#    Simulates OCR by extracting procedure codes and costs from bill text.
+#    """
+#    procedure_codes = re.findall(r'\\b\\d{5}\\b', document_text)
+#    costs = [float(cost.replace(',', '')) for cost in re.findall(r'\\$(\\d+(?:,\\d{3})*(?:\\.\\d{2})?)', document_text)]
+#    return {"procedure_codes": procedure_codes, "costs": costs, "total_cost": sum(costs)}
+def ocr_tool(document_b64: str) -> Dict:
     """
-    Simulates OCR by extracting procedure codes and costs from bill text.
+    Accepts a base64-encoded string of the document image.
+    Decodes it, performs OCR, and extracts information.
     """
-    procedure_codes = re.findall(r'\\b\\d{5}\\b', document_text)
-    costs = [float(cost.replace(',', '')) for cost in re.findall(r'\\$(\\d+(?:,\\d{3})*(?:\\.\\d{2})?)', document_text)]
-    return {"procedure_codes": procedure_codes, "costs": costs, "total_cost": sum(costs)}
+    try:
+        # Decode base64 string to bytes
+        document_bytes = base64.b64decode(document_b64)
+        image = Image.open(io.BytesIO(document_bytes))
+        
+        # Perform OCR
+        extracted_text = pytesseract.image_to_string(image)
+        
+        # Extract data
+        patient_name = extract_patient_name(extracted_text)
+        dates = extract_dates(extracted_text)
+        procedure_codes = re.findall(r'\b\d{5}\b', extracted_text)
+        costs = [float(cost.replace(',', '')) for cost in re.findall(r'\$(\d+(?:,\d{3})*(?:\.\d{2})?)', extracted_text)]
+        total_cost = sum(costs)
+        
+        return {
+            "extracted_text": extracted_text,
+            "patient_name": patient_name,
+            "dates": dates,
+            "procedure_codes": procedure_codes,
+            "costs": costs,
+            "total_cost": total_cost
+        }
+    except Exception as e:
+        return {"error": f"OCR processing failed: {str(e)}"}
+
+def extract_patient_name(ocr_text: str) -> str:
+    match = re.search(r'(?:Patient Name|Name|Patient):?\s*([A-Za-z,.\s]+)', ocr_text, re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    return "Unknown"
+
+def extract_dates(ocr_text: str) -> list:
+    date_pattern = r'\b(?:\d{1,2}[-/]\d{1,2}[-/]\d{2,4}|\d{4}[-/]\d{1,2}[-/]\d{1,2})\b'
+    return re.findall(date_pattern, ocr_text)
 
 # Tool: Validate if procedures are covered
 def eligibility_api_tool(procedure_codes: List[str], policy_number: str) -> Dict:
