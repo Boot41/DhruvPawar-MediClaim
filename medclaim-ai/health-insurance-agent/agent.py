@@ -11,7 +11,8 @@ from .claim_agent_tools import (
     get_popular_vendors_tool,
     form_generation_func_tool,
     insurance_api_func_tool,
-    claim_status_func_tool
+    claim_status_func_tool,
+    vendor_search_func_tool
 )
 from .instructions import (
     policy_guidance_instruction,
@@ -50,7 +51,7 @@ claim_processor_agent = Agent(
     name="claim_form_processor",
     model="gemini-2.5-flash",
     instruction=claim_processor_instruction,
-    tools=[ocr_func_tool,invoice_extract_func_tool,policy_extract_func_tool,form_generation_func_tool, insurance_api_func_tool, claim_status_func_tool,get_popular_vendors_tool]
+    tools=[vendor_search_func_tool,ocr_func_tool,invoice_extract_func_tool,policy_extract_func_tool,form_generation_func_tool, insurance_api_func_tool, claim_status_func_tool,get_popular_vendors_tool]
 )
 
 # 5. System Coordinator Agent (Orchestrator)
