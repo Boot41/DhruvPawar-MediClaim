@@ -1,5 +1,5 @@
 # Google API Configuration
-GOOGLE_API_KEY=AIzaSyC6ZNdpGyKQLPcUFCa76qLOufLEKcz7oFs
+GOOGLE_API_KEY=api_key
 GOOGLE_PROJECT_ID=your_project_id_here
 
 # Database Configuration
