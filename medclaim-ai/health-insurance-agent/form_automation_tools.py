@@ -2,7 +2,7 @@ import os
 import requests
 import re
 from google.adk.tools import FunctionTool
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 import fitz  # PyMuPDF
 import io
 from PyPDF2 import PdfReader
@@ -23,18 +23,43 @@ LOCAL_VENDOR_PDFS = {
 
 def retrieve_pdf_tool(vendor_name: str) -> Dict[str, Any]:
     """Retrieve PDF from local repo or attempt download if missing."""
-    # Check local first
-    if vendor_name in LOCAL_VENDOR_PDFS and os.path.isfile(LOCAL_VENDOR_PDFS[vendor_name]):
+    # Normalize vendor name for better matching
+    normalized_name = vendor_name.strip()
+    
+    # Check exact match first
+    if normalized_name in LOCAL_VENDOR_PDFS and os.path.isfile(LOCAL_VENDOR_PDFS[normalized_name]):
         return {
             "success": True,
-            "pdf_path": LOCAL_VENDOR_PDFS[vendor_name],
+            "pdf_path": LOCAL_VENDOR_PDFS[normalized_name],
             "source": "local"
         }
     
-    # Fallback: search URL from vendor list or via LLM (not implemented here)
+    # Try fuzzy matching for common variations
+    vendor_mappings = {
+        "star health": "Star Health Insurance",
+        "hdfc ergo": "HDFC ERGO", 
+        "icici lombard": "ICICI Lombard",
+        "new india": "New India Assurance",
+        "max bupa": "Max Bupa (Niva Bupa)",
+        "niva bupa": "Max Bupa (Niva Bupa)"
+    }
+    
+    normalized_lower = normalized_name.lower()
+    for key, mapped_name in vendor_mappings.items():
+        if key in normalized_lower:
+            if mapped_name in LOCAL_VENDOR_PDFS and os.path.isfile(LOCAL_VENDOR_PDFS[mapped_name]):
+                return {
+                    "success": True,
+                    "pdf_path": LOCAL_VENDOR_PDFS[mapped_name],
+                    "source": "local",
+                    "mapped_from": vendor_name
+                }
+    
+    # List available vendors for debugging
+    available_vendors = list(LOCAL_VENDOR_PDFS.keys())
     return {
         "success": False,
-        "error": f"Local PDF for vendor '{vendor_name}' not found."
+        "error": f"PDF for vendor '{vendor_name}' not found. Available vendors: {available_vendors}"
     }
 
 
@@ -246,7 +271,7 @@ def fill_local_pdf_tool(
     vendor_name: str,
     user_data: Dict[str, str],
     output_pdf_path: str,
-    field_coordinates: Dict[str, Tuple[float, float, int]] = None
+    field_coordinates: Optional[Dict[str, Tuple[float, float, int]]] = None
 ) -> Dict[str, Any]:
     """Fill local PDF form with user data using intelligent coordinate placement."""
     try:
