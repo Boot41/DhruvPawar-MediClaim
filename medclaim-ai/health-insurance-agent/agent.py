@@ -1,17 +1,17 @@
 # health_insurance_agent/agents.py
 from google.adk.agents import Agent
 from google.adk.tools import agent_tool
-from .tools import (
+from tools import (
     policy_extract_func_tool,
     invoice_extract_func_tool,
     ocr_func_tool,
     coverage_calc_func_tool,
 )
-from .claim_agent_tools import (
+from claim_agent_tools import (
     get_popular_vendors_tool,
     vendor_search_func_tool,
 )
-from .instructions import (
+from instructions import (
     policy_guidance_instruction,
     document_analyzer_instruction,
     coverage_eligibility_instruction,
@@ -19,7 +19,7 @@ from .instructions import (
     form_automation_instruction,
     system_coordinator_instruction
 )
-from .form_automation_tools import (
+from form_automation_tools import (
     test_pdf_download_func_tool,
     fill_local_pdf_func_tool,
     identify_missing_fields_func_tool,

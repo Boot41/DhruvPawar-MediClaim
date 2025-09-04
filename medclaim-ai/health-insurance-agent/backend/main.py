@@ -18,7 +18,7 @@ from backend.auth import (
     get_password_hash, create_user_session, get_current_session
 )
 from backend.file_handler import file_handler
-from agents.agent_service import AgentService
+from backend.agent_service import agent_service
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -29,17 +29,17 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Initialize agent service singleton
-agent_service = AgentService()
+# Agent service is imported as singleton from backend.agent_service
 
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000", "http://127.0.0.1:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Security
 security = HTTPBearer()
@@ -95,6 +95,16 @@ async def health_check():
     )
 
 # Authentication endpoints
+@app.options("/auth/register")
+async def options_register():
+    """Handle CORS preflight for register endpoint."""
+    return {"message": "OK"}
+
+@app.options("/auth/login")
+async def options_login():
+    """Handle CORS preflight for login endpoint."""
+    return {"message": "OK"}
+
 @app.post("/auth/register", response_model=APIResponse)
 async def register(user_data: UserCreate, db: Session = Depends(get_db)):
     """Register a new user."""
@@ -414,6 +424,11 @@ async def download_form(
     )
 
 # Chat endpoint
+@app.options("/chat")
+async def options_chat():
+    """Handle CORS preflight for chat endpoint."""
+    return {"message": "OK"}
+
 @app.post("/chat", response_model=APIResponse)
 async def chat(
     message: ChatMessage,
@@ -421,8 +436,7 @@ async def chat(
     db: Session = Depends(get_db)
 ):
     """Process chat message with AI agent."""
-    # Validate session
-    session = get_current_session(message.session_id, db)
+    # Session validation is handled by require_active_user dependency
     
     # Process message with agent
     response = await agent_service.process_chat_message(

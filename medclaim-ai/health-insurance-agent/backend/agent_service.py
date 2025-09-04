@@ -3,10 +3,14 @@ import asyncio
 from typing import Dict, Any, Optional, List
 from sqlalchemy.orm import Session
 from backend.database import WorkflowState, ChatMessage, Claim, Document, Vendor
-from agents.agent import root_agent, policy_guidance_agent, document_analyzer_agent, coverage_eligibility_agent, claim_processor_agent, form_automation_agent
-from agents.tools import extract_policy_data, extract_invoice_data, dynamic_coverage_calculator
-from agents.form_automation_tools import retrieve_pdf_tool, fill_local_pdf_func_tool
-from agents.claim_agent_tools import get_popular_vendors_tool, vendor_search_func_tool
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from agent import root_agent, policy_guidance_agent, document_analyzer_agent, coverage_eligibility_agent, claim_processor_agent, form_automation_agent
+from tools import extract_policy_data, extract_invoice_data, dynamic_coverage_calculator
+from form_automation_tools import retrieve_pdf_tool, fill_local_pdf_func_tool
+from claim_agent_tools import get_popular_vendors_tool, vendor_search_func_tool
 from backend.file_handler import file_handler
 import base64
 
