@@ -13,6 +13,11 @@ from form_automation_tools import retrieve_pdf_tool, fill_local_pdf_func_tool
 from claim_agent_tools import get_popular_vendors_tool, vendor_search_func_tool
 from backend.file_handler import file_handler
 import base64
+# Google ADK imports for proper agent execution
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from google.genai import types
+from datetime import datetime
 
 class AgentService:
     def __init__(self):
@@ -24,6 +29,19 @@ class AgentService:
             "claim_processor": claim_processor_agent,
             "form_automation": form_automation_agent
         }
+        
+        # Initialize ADK components
+        self.session_service = InMemorySessionService()
+        self.app_name = "medclaim_ai"
+        
+        # Initialize runners for each agent
+        self.runners = {}
+        for agent_name, agent in self.agents.items():
+            self.runners[agent_name] = Runner(
+                agent=agent,
+                app_name=self.app_name,
+                session_service=self.session_service
+            )
 
     async def process_document(self, document_path: str, document_type: str, user_id: str, db: Session) -> Dict[str, Any]:
         """Process uploaded document using appropriate agent."""
@@ -254,28 +272,13 @@ class AgentService:
             print(f"Error updating workflow state: {e}")
 
     async def _run_agent_async(self, agent_name: str, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Run agent asynchronously."""
+        """Run agent asynchronously using Google ADK Runner."""
         try:
-            agent = self.agents.get(agent_name)
-            if not agent:
+            # Get the runner for the agent
+            runner = self.runners.get(agent_name)
+            if not runner:
                 raise ValueError(f"Agent {agent_name} not found")
             
-            # Run agent in thread pool to avoid blocking
-            loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(None, self._run_agent_sync, agent, context)
-            
-            return result
-            
-        except Exception as e:
-            return {
-                "success": False,
-                "error": str(e),
-                "content": "I apologize, but I encountered an error. Please try again."
-            }
-
-    def _run_agent_sync(self, agent, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Run agent synchronously."""
-        try:
             # Format context for agent
             if "message" in context:
                 prompt = context["message"]
@@ -284,21 +287,47 @@ class AgentService:
             else:
                 prompt = "Please help with this request."
             
-            # Run agent
-            response = agent.run(prompt)
+            # Create user content for Google ADK
+            user_content = types.Content(
+                role='user',
+                parts=[types.Part(text=prompt)]
+            )
+            
+            # Generate unique session ID
+            session_id = f"session_{agent_name}_{datetime.now().timestamp()}"
+            user_id = context.get("user_id", "default_user")
+            
+            # Create session
+            await self.session_service.create_session(
+                app_name=self.app_name,
+                user_id=user_id,
+                session_id=session_id
+            )
+            
+            # Run agent and get response
+            final_response = "No response received"
+            async for event in runner.run_async(
+                user_id=user_id,
+                session_id=session_id,
+                new_message=user_content
+            ):
+                if event.is_final_response() and event.content and event.content.parts:
+                    final_response = event.content.parts[0].text
+                    break
             
             return {
                 "success": True,
-                "content": response.content if hasattr(response, 'content') else str(response),
-                "metadata": getattr(response, 'metadata', {}),
-                "next_step": getattr(response, 'next_step', None)
+                "content": final_response,
+                "metadata": {"session_id": session_id},
+                "next_step": None
             }
             
         except Exception as e:
+            print(f"Agent execution error: {e}")  # Add logging for debugging
             return {
                 "success": False,
                 "error": str(e),
-                "content": "I apologize, but I encountered an error processing your request."
+                "content": f"Agent error: {str(e)}"
             }
 
 # Global agent service instance
