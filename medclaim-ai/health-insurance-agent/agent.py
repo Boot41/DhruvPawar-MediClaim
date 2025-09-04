@@ -82,7 +82,8 @@ claim_processor_agent = Agent(
     get_popular_vendors_tool],
     # api_key=GOOGLE_API_KEY  # REMOVED
 )
-# 4. Form Automation Agent
+
+# 5. Form Automation Agent
 form_automation_agent = Agent(
     name="form_automation_agent",
     model="gemini-2.5-flash",
@@ -96,7 +97,7 @@ form_automation_agent = Agent(
     map_data_to_fields_func_tool],
     # api_key=GOOGLE_API_KEY  # REMOVED
 )
-# 5. System Coordinator Agent (Orchestrator)
+# 6. System Coordinator Agent (Orchestrator)
 root_agent = Agent(
     name="system_coordinator",
     model="gemini-2.5-flash",

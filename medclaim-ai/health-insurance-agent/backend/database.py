@@ -48,6 +48,7 @@ class UserSession(Base):
     # Relationships
     user = relationship("User", back_populates="sessions")
     workflow_states = relationship("WorkflowState", back_populates="session")
+    chat_messages = relationship("ChatMessage", back_populates="session")
 
 class Document(Base):
     __tablename__ = "documents"
@@ -67,6 +68,7 @@ class Document(Base):
     # Relationships
     user = relationship("User", back_populates="documents")
     claims = relationship("Claim", back_populates="policy_document")
+    claim_documents = relationship("ClaimDocument", back_populates="document")
 
 class Vendor(Base):
     __tablename__ = "vendors"
@@ -127,7 +129,7 @@ class ClaimDocument(Base):
     
     # Relationships
     claim = relationship("Claim", back_populates="claim_documents")
-    document = relationship("Document")
+    document = relationship("Document", back_populates="claim_documents")
 
 class WorkflowState(Base):
     __tablename__ = "workflow_states"
@@ -153,6 +155,9 @@ class ChatMessage(Base):
     content = Column(Text, nullable=False)
     message_metadata = Column(Text)  # JSON string for additional data
     created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    session = relationship("UserSession", back_populates="chat_messages")
 
 # Database dependency
 def get_db():

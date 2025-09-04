@@ -50,6 +50,11 @@ async def startup_event():
     """Initialize database and seed data."""
     create_tables()
     await seed_vendors()
+    
+    # Start background cleanup tasks
+    import asyncio
+    asyncio.create_task(periodic_cleanup())
+    
     print("✅ MediClaim AI Backend started successfully!")
     print("📊 API Documentation: http://localhost:8080/docs")
     print("🔗 Health Check: http://localhost:8080/health")
@@ -93,6 +98,52 @@ async def health_check():
         database="connected",
         agents="ready"
     )
+
+# =============== Agent Tool Endpoints ===============
+
+@app.get("/api/vendors")
+async def get_vendors():
+    """Get list of available insurance vendors."""
+    try:
+        vendors = await agent_service.get_vendors()
+        return {"success": True, "vendors": vendors}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/vendors/search/{vendor_name}")
+async def search_vendor(vendor_name: str):
+    """Search for a specific vendor's claim form."""
+    try:
+        result = await agent_service.search_vendor(vendor_name)
+        return {"success": True, "result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/forms/extract-fields")
+async def extract_form_fields(
+    pdf_path: str = Form(...),
+    current_user: User = Depends(require_active_user)
+):
+    """Extract form fields from a PDF."""
+    try:
+        result = await agent_service.extract_form_fields(pdf_path)
+        return {"success": True, "result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/forms/map-data")
+async def map_data_to_fields(
+    user_data: dict = Form(...),
+    form_fields: list = Form(...),
+    vendor_name: str = Form(...),
+    current_user: User = Depends(require_active_user)
+):
+    """Map user data to form fields."""
+    try:
+        result = await agent_service.map_data_to_fields(user_data, form_fields, vendor_name)
+        return {"success": True, "result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Authentication endpoints
 @app.options("/auth/register")
@@ -562,12 +613,7 @@ async def get_session_state(
         updated_at=workflow_state.updated_at
     )
 
-# Background task for cleanup
-@app.on_event("startup")
-async def startup_cleanup():
-    """Start background cleanup tasks."""
-    import asyncio
-    asyncio.create_task(periodic_cleanup())
+# Background task for cleanup (moved to main startup event above)
 
 async def periodic_cleanup():
     """Periodic cleanup of temporary files and expired sessions."""

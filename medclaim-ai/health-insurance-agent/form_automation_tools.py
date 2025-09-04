@@ -392,9 +392,6 @@ def fill_local_pdf_tool(
     except Exception as e:
         return {"success": False, "error": f"PDF filling failed: {str(e)}"}
 
-fill_local_pdf_func_tool = FunctionTool(func=fill_local_pdf_tool)
-
-
 def identify_missing_fields_tool(
     required_fields: List[str],
     filled_data: Dict[str, Any]
@@ -596,12 +593,12 @@ def validate_pdf_coordinates(pdf_path: str, coordinates: Dict[str, tuple]) -> Di
         return {"success": False, "error": str(e)}
 
 # Function tools
+fill_local_pdf_func_tool = FunctionTool(func=fill_local_pdf_tool)
 generate_missing_data_prompt_func_tool = FunctionTool(func=generate_missing_data_prompt_tool)
 retrieve_pdf_func_tool = FunctionTool(func=retrieve_pdf_tool)
 test_pdf_download_func_tool = FunctionTool(func=test_pdf_download_tool)
 extract_form_fields_func_tool = FunctionTool(func=extract_form_fields_tool)
 map_data_to_fields_func_tool = FunctionTool(func=map_data_to_fields_tool)
-fill_local_pdf_func_tool = FunctionTool(func=fill_local_pdf_tool)
 identify_missing_fields_func_tool = FunctionTool(func=identify_missing_fields_tool)
 validate_pdf_coordinates_func_tool = FunctionTool(func=validate_pdf_coordinates)
 
