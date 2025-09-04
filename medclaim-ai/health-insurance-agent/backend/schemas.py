@@ -198,6 +198,7 @@ class FileUploadResponse(BaseModel):
     document_id: Optional[str] = None
     message: str
     extracted_data: Optional[Dict[str, Any]] = None
+    agent_response: Optional[str] = None
 
 
 # ----------------------

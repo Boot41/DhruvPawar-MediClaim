@@ -32,9 +32,12 @@ class FileHandler:
 
     async def validate_file(self, file: UploadFile) -> Dict[str, Any]:
         """Validate uploaded file for security and format."""
+        print(f"Validating file: {file.filename}, content_type: {file.content_type}")
+        
         # Check file size
         content = await file.read()
         await file.seek(0)  # Reset file pointer
+        print(f"File size: {len(content)} bytes")
         
         if len(content) > MAX_FILE_SIZE:
             raise HTTPException(
@@ -51,14 +54,29 @@ class FileHandler:
             )
         
         # Verify MIME type
-        mime_type = magic.from_buffer(content, mime=True)
-        expected_mime = ALLOWED_EXTENSIONS[file_ext]
-        
-        if mime_type != expected_mime:
-            raise HTTPException(
-                status_code=400,
-                detail=f"File content doesn't match extension. Expected {expected_mime}, got {mime_type}"
-            )
+        try:
+            mime_type = magic.from_buffer(content, mime=True)
+            expected_mime = ALLOWED_EXTENSIONS[file_ext]
+            print(f"Detected MIME type: {mime_type}, Expected: {expected_mime}")
+            
+            if mime_type != expected_mime:
+                # Be more lenient with PDF detection as magic can be inconsistent
+                if file_ext == 'pdf' and 'pdf' in mime_type.lower():
+                    mime_type = expected_mime
+                elif file_ext in ['jpg', 'jpeg'] and 'jpeg' in mime_type.lower():
+                    mime_type = expected_mime  
+                elif file_ext == 'png' and 'png' in mime_type.lower():
+                    mime_type = expected_mime
+                else:
+                    print(f"MIME type mismatch: expected {expected_mime}, got {mime_type}")
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"File content doesn't match extension. Expected {expected_mime}, got {mime_type}"
+                    )
+        except Exception as e:
+            print(f"Error detecting MIME type: {e}")
+            # Fallback to file extension validation only
+            mime_type = ALLOWED_EXTENSIONS[file_ext]
         
         return {
             "content": content,

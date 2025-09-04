@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
     // Check for stored token on app load
     const token = localStorage.getItem('authToken');
     const userData = localStorage.getItem('userData');
+    const sessionId = localStorage.getItem('sessionId');
     
     if (token && userData) {
       try {
@@ -27,10 +28,16 @@ export const AuthProvider = ({ children }) => {
         setUser(parsedUser);
         setIsAuthenticated(true);
         apiService.setAuthToken(token);
+        
+        // Restore session ID if available
+        if (sessionId) {
+          apiService.setSessionId(sessionId);
+        }
       } catch (error) {
         console.error('Error parsing stored user data:', error);
         localStorage.removeItem('authToken');
         localStorage.removeItem('userData');
+        localStorage.removeItem('sessionId');
       }
     }
     setLoading(false);

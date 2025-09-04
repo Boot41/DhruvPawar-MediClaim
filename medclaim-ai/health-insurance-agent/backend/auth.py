@@ -101,9 +101,25 @@ def get_current_session(
     session_token: str,
     db: Session = Depends(get_db)
 ) -> UserSession:
-    """Get the current user session."""
+    """Get the current user session by session_token."""
     session = db.query(UserSession).filter(
         UserSession.session_token == session_token,
+        UserSession.is_active == True,
+        UserSession.expires_at > datetime.utcnow()
+    ).first()
+    
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired session"
+        )
+    
+    return session
+
+def get_session_by_id(session_id: str, db: Session) -> UserSession:
+    """Get the current user session by session_id."""
+    session = db.query(UserSession).filter(
+        UserSession.id == session_id,
         UserSession.is_active == True,
         UserSession.expires_at > datetime.utcnow()
     ).first()

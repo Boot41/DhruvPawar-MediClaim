@@ -245,6 +245,95 @@ class AgentService:
                 "response": "I apologize, but I encountered an error processing your message. Please try again."
             }
 
+    async def generate_document_response(self, document_type: str, extracted_data: Dict[str, Any], session_id: str, db: Session) -> Dict[str, Any]:
+        """Generate a conversational response about the processed document."""
+        try:
+            # Create a summary message based on document type and extracted data
+            if document_type == "policy":
+                response_message = self._create_policy_summary(extracted_data)
+            elif document_type == "invoice":
+                response_message = self._create_invoice_summary(extracted_data)
+            else:
+                response_message = "I've successfully processed your document and extracted the relevant information."
+            
+            # Save the agent response as a chat message
+            agent_message = ChatMessage(
+                session_id=session_id,
+                message_type="agent",
+                content=response_message,
+                message_metadata=json.dumps({
+                    "document_type": document_type,
+                    "extracted_data": extracted_data,
+                    "timestamp": str(datetime.now().timestamp())
+                })
+            )
+            
+            db.add(agent_message)
+            db.commit()
+            
+            return {
+                "success": True,
+                "response": response_message,
+                "metadata": {"document_type": document_type}
+            }
+            
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e),
+                "response": "I've processed your document, but encountered an issue generating a summary."
+            }
+
+    def _create_policy_summary(self, policy_data: Dict[str, Any]) -> str:
+        """Create a conversational summary of policy data."""
+        summary_parts = ["📋 **Policy Document Processed Successfully!**\n"]
+        
+        if policy_data.get("policy_number"):
+            summary_parts.append(f"**Policy Number:** {policy_data['policy_number']}")
+        
+        if policy_data.get("insurer_name"):
+            summary_parts.append(f"**Insurer:** {policy_data['insurer_name']}")
+        
+        if policy_data.get("coverage_amount"):
+            summary_parts.append(f"**Coverage Amount:** ₹{policy_data['coverage_amount']:,}")
+        
+        if policy_data.get("deductible"):
+            summary_parts.append(f"**Deductible:** ₹{policy_data['deductible']:,}")
+        
+        if policy_data.get("copay_percentage"):
+            summary_parts.append(f"**Co-pay:** {policy_data['copay_percentage']}%")
+        
+        summary_parts.append("\n✅ I can now help you calculate coverage for medical bills using this policy information.")
+        
+        return "\n".join(summary_parts)
+
+    def _create_invoice_summary(self, invoice_data: Dict[str, Any]) -> str:
+        """Create a conversational summary of invoice data."""
+        summary_parts = ["🧾 **Medical Invoice Processed Successfully!**\n"]
+        
+        if invoice_data.get("hospital_name"):
+            summary_parts.append(f"**Hospital:** {invoice_data['hospital_name']}")
+        
+        if invoice_data.get("patient_name"):
+            summary_parts.append(f"**Patient:** {invoice_data['patient_name']}")
+        
+        if invoice_data.get("total_amount"):
+            summary_parts.append(f"**Total Amount:** ₹{invoice_data['total_amount']:,}")
+        
+        if invoice_data.get("procedures"):
+            procedures = invoice_data['procedures']
+            if isinstance(procedures, list) and procedures:
+                summary_parts.append(f"**Procedures:** {', '.join(procedures[:3])}")
+                if len(procedures) > 3:
+                    summary_parts.append(f"... and {len(procedures) - 3} more")
+        
+        if invoice_data.get("date_of_service"):
+            summary_parts.append(f"**Service Date:** {invoice_data['date_of_service']}")
+        
+        summary_parts.append("\n✅ I can now calculate your insurance coverage if you have a policy document uploaded.")
+        
+        return "\n".join(summary_parts)
+
     async def update_workflow_state(self, session_id: str, step: str, step_data: Dict[str, Any], db: Session):
         """Update workflow state for a session."""
         try:
@@ -255,7 +344,7 @@ class AgentService:
             if workflow_state:
                 workflow_state.current_step = step
                 workflow_state.step_data = json.dumps(step_data)
-                workflow_state.updated_at = asyncio.get_event_loop().time()
+                workflow_state.updated_at = datetime.now()
             else:
                 workflow_state = WorkflowState(
                     session_id=session_id,
@@ -312,7 +401,14 @@ class AgentService:
                 new_message=user_content
             ):
                 if event.is_final_response() and event.content and event.content.parts:
-                    final_response = event.content.parts[0].text
+                    # Extract text from all parts, handling different part types
+                    text_parts = []
+                    for part in event.content.parts:
+                        if hasattr(part, 'text') and part.text:
+                            text_parts.append(part.text)
+                    
+                    if text_parts:
+                        final_response = ' '.join(text_parts)
                     break
             
             return {

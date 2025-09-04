@@ -147,22 +147,91 @@ const ChatContainer = () => {
   const handleFileUpload = async (file) => {
     try {
       setLoading(true);
-      const fileData = await apiService.fileToBase64(file);
-      const response = await apiService.sendMessage('', fileData);
+      setError(null);
       
-      const botMessage = {
+      // Determine file type based on current step or filename
+      let fileType = 'policy'; // default
+      if (currentStep === 0) {
+        fileType = 'policy';
+      } else if (currentStep === 1) {
+        fileType = 'invoice';
+      } else {
+        // Infer from filename if step is ambiguous
+        const fileName = file.name.toLowerCase();
+        if (fileName.includes('policy') || fileName.includes('insurance')) {
+          fileType = 'policy';
+        } else if (fileName.includes('bill') || fileName.includes('invoice') || fileName.includes('receipt')) {
+          fileType = 'invoice';
+        }
+      }
+      
+      // Add user message showing file upload
+      const userMessage = {
         id: Date.now(),
-        content: response.message || 'File uploaded successfully!',
+        content: `📎 Uploading ${file.name} (${fileType} document)...`,
+        isBot: false,
+        timestamp: new Date().toISOString(),
+        status: 'uploading'
+      };
+      setMessages(prev => [...prev, userMessage]);
+      
+      // Use the correct upload endpoint instead of chat
+      const response = await apiService.uploadDocument(file, fileType);
+      
+      // Update user message status
+      setMessages(prev => prev.map(msg => 
+        msg.id === userMessage.id 
+          ? { ...msg, status: 'uploaded', content: `✅ Uploaded ${file.name}` }
+          : msg
+      ));
+      
+      // Add bot response
+      if (response.success) {
+        let botContent = response.message || 'File uploaded successfully!';
+        
+        // Use agent response if available (contains extracted data summary)
+        if (response.agent_response) {
+          botContent = response.agent_response;
+        }
+        
+        const botMessage = {
+          id: Date.now() + 1,
+          content: botContent,
+          isBot: true,
+          timestamp: new Date().toISOString()
+        };
+        
+        setMessages(prev => [...prev, botMessage]);
+        
+        // Update session state based on file type
+        const newStep = fileType === 'policy' ? 'policy_uploaded' : 'invoice_uploaded';
+        updateSessionState({
+          state: newStep,
+          progress: fileType === 'policy' ? 25 : 50
+        });
+      } else {
+        throw new Error(response.message || 'Upload failed');
+      }
+      
+    } catch (err) {
+      // Update user message to show error
+      setMessages(prev => prev.map(msg => 
+        msg.id && msg.status === 'uploading'
+          ? { ...msg, status: 'error', content: `❌ Failed to upload ${file.name}` }
+          : msg
+      ));
+      
+      setError('Failed to upload file. Please try again.');
+      console.error('File upload error:', err);
+      
+      // Add error message from bot
+      const errorMessage = {
+        id: Date.now() + 2,
+        content: `I'm sorry, but I encountered an error while uploading your ${file.name}. Please make sure it's a valid PDF, JPG, or PNG file and try again.`,
         isBot: true,
         timestamp: new Date().toISOString()
       };
-      
-      setMessages(prev => [...prev, botMessage]);
-      updateSessionState(response);
-      
-    } catch (err) {
-      setError('Failed to upload file. Please try again.');
-      console.error('File upload error:', err);
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setLoading(false);
     }

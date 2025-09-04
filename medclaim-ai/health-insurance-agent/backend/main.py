@@ -15,7 +15,7 @@ from backend.database import get_db, create_tables, User, UserSession, Document,
 from backend.schemas import *
 from backend.auth import (
     authenticate_user, create_access_token, get_current_user, require_active_user,
-    get_password_hash, create_user_session, get_current_session
+    get_password_hash, create_user_session, get_current_session, get_session_by_id
 )
 from backend.file_handler import file_handler
 from backend.agent_service import agent_service
@@ -167,6 +167,11 @@ async def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     )
 
 # Document upload endpoints
+@app.options("/upload-document")
+async def options_upload():
+    """Handle CORS preflight for upload endpoint."""
+    return {"message": "OK"}
+
 @app.post("/upload-document", response_model=FileUploadResponse)
 async def upload_document(
     file: UploadFile = File(...),
@@ -177,8 +182,10 @@ async def upload_document(
 ):
     """Upload and process document."""
     try:
+        print(f"Upload request - File: {file.filename}, Type: {file_type}, Session: {session_id}, User: {current_user.id}")
+        
         # Validate session
-        session = get_current_session(session_id, db)
+        session = get_session_by_id(session_id, db)
         
         # Save file
         file_info = await file_handler.save_file(file, file_type, current_user.id)
@@ -212,11 +219,30 @@ async def upload_document(
         
         db.commit()
         
+        # Generate agent response about the processed document
+        agent_response = None
+        if processing_result["success"]:
+            # Create a conversational response about what was extracted
+            extracted_data = processing_result.get("extracted_data", {})
+            
+            if file_type == "policy":
+                agent_response = await agent_service.generate_document_response(
+                    "policy", extracted_data, session_id, db
+                )
+            elif file_type == "invoice":
+                agent_response = await agent_service.generate_document_response(
+                    "invoice", extracted_data, session_id, db
+                )
+        
         # Update workflow state
         await agent_service.update_workflow_state(
             session_id, 
             f"{file_type}_uploaded", 
-            {"document_id": document.id, "extracted_data": processing_result.get("extracted_data")},
+            {
+                "document_id": document.id, 
+                "extracted_data": processing_result.get("extracted_data"),
+                "agent_response": agent_response.get("response") if agent_response and agent_response.get("success") else None
+            },
             db
         )
         
@@ -224,11 +250,19 @@ async def upload_document(
             success=processing_result["success"],
             document_id=document.id,
             message="Document uploaded and processed successfully" if processing_result["success"] else "Document uploaded but processing failed",
-            extracted_data=processing_result.get("extracted_data")
+            extracted_data=processing_result.get("extracted_data"),
+            agent_response=agent_response.get("response") if agent_response and agent_response.get("success") else None
         )
         
+    except HTTPException as he:
+        # Re-raise HTTP exceptions (like auth failures, validation errors)
+        print(f"HTTP Exception during upload: {he.status_code} - {he.detail}")
+        raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Unexpected error during upload: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 # Vendor endpoints
 @app.get("/vendors", response_model=List[VendorResponse])

@@ -104,28 +104,39 @@ class ApiService {
   }
 
   async startSession() {
-    // Create a new session and get initial state
-    const sessionResponse = await this.createSession();
-    if (sessionResponse.success) {
-      this.setSessionId(sessionResponse.data.session_id);
-      
-      // Get initial session state
-      try {
-        const stateResponse = await this.getSessionState();
-        return {
-          message: "Hello! I'm your MediClaim AI assistant. I can help you process insurance claims by analyzing your policy documents and medical bills. How can I assist you today?",
-          state: stateResponse.current_step || 'initial',
-          progress: 0
-        };
-      } catch (error) {
-        return {
-          message: "Hello! I'm your MediClaim AI assistant. How can I help you today?",
-          state: 'initial',
-          progress: 0
-        };
+    // Check if we already have a session ID from login
+    let sessionId = this.sessionId || localStorage.getItem('sessionId');
+    
+    if (!sessionId) {
+      // Create a new session only if we don't have one
+      const sessionResponse = await this.createSession();
+      if (sessionResponse.success) {
+        sessionId = sessionResponse.data.session_id;
+        this.setSessionId(sessionId);
+        localStorage.setItem('sessionId', sessionId);
+      } else {
+        throw new Error('Failed to create session');
       }
+    } else {
+      // Use existing session
+      this.setSessionId(sessionId);
     }
-    throw new Error('Failed to create session');
+    
+    // Get initial session state
+    try {
+      const stateResponse = await this.getSessionState();
+      return {
+        message: "Hello! I'm your MediClaim AI assistant. I can help you process insurance claims by analyzing your policy documents and medical bills. How can I assist you today?",
+        state: stateResponse.current_step || 'initial',
+        progress: 0
+      };
+    } catch (error) {
+      return {
+        message: "Hello! I'm your MediClaim AI assistant. How can I help you today?",
+        state: 'initial',
+        progress: 0
+      };
+    }
   }
 
   async getSessionState() {
@@ -134,16 +145,52 @@ class ApiService {
 
   // Document upload
   async uploadDocument(file, fileType) {
+    // Ensure we have a session ID
+    if (!this.sessionId) {
+      throw new Error('No active session. Please refresh the page.');
+    }
+    
     const formData = new FormData();
     formData.append('file', file);
     formData.append('file_type', fileType);
     formData.append('session_id', this.sessionId);
 
-    return this.makeRequest('/upload-document', {
-      method: 'POST',
-      body: formData,
-      headers: this.getMultipartHeaders()
+    console.log('Uploading document:', {
+      fileName: file.name,
+      fileType: fileType,
+      sessionId: this.sessionId,
+      hasAuthToken: !!this.authToken
     });
+
+    // For file uploads, bypass makeRequest to avoid JSON Content-Type header
+    const url = `${this.baseURL}/upload-document`;
+    const headers = {};
+    
+    if (this.authToken) {
+      headers['Authorization'] = `Bearer ${this.authToken}`;
+    }
+    // DO NOT set Content-Type - let browser set it with boundary
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: headers,
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Upload error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Upload request failed:', error);
+      throw error;
+    }
   }
 
   // Chat with AI agent
