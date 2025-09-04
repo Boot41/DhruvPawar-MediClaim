@@ -12,14 +12,22 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PipelineResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string>(() => {
+    // Generate a unique session ID
+    return 'session_' + Math.random().toString(36).substr(2, 9);
+  });
 
   const uploadDocument = async (file: File, documentType: string) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("document_type", documentType);
+    formData.append("file_type", documentType.toLowerCase());
+    formData.append("session_id", sessionId);
 
-    const res = await fetch("http://localhost:8000/api/documents/upload", {
+    const res = await fetch("http://localhost:8080/upload-document", {
       method: "POST",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+      },
       body: formData,
       credentials: "include", // include auth cookies if needed
     });
@@ -31,10 +39,16 @@ export default function Chatbot() {
   };
 
   const sendChatMessage = async (message: string) => {
-    const res = await fetch("http://localhost:8000/api/chat/", {
+    const res = await fetch("http://localhost:8080/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+      },
+      body: JSON.stringify({ 
+        message,
+        session_id: sessionId 
+      }),
       credentials: "include", // include auth cookies if needed
     });
 
@@ -53,8 +67,8 @@ export default function Chatbot() {
 
     try {
       // Upload documents
-      const billResult = await uploadDocument(billFile, "BILL");
-      const policyResult = await uploadDocument(policyFile, "POLICY");
+      const billResult = await uploadDocument(billFile, "invoice");
+      const policyResult = await uploadDocument(policyFile, "policy");
 
       console.log("Uploaded bill:", billResult);
       console.log("Uploaded policy:", policyResult);

@@ -502,7 +502,31 @@ async def get_session_state(
         db.commit()
         db.refresh(workflow_state)
     
-    return workflow_state
+    # Parse JSON strings to proper objects for response validation
+    try:
+        step_data = json.loads(workflow_state.step_data) if workflow_state.step_data else {}
+    except (json.JSONDecodeError, TypeError):
+        step_data = {}
+    
+    try:
+        conversation_history = json.loads(workflow_state.conversation_history) if workflow_state.conversation_history else []
+    except (json.JSONDecodeError, TypeError):
+        conversation_history = []
+    
+    try:
+        agent_context = json.loads(workflow_state.agent_context) if workflow_state.agent_context else {}
+    except (json.JSONDecodeError, TypeError):
+        agent_context = {}
+    
+    # Return properly formatted response
+    return WorkflowStateResponse(
+        id=workflow_state.id,
+        current_step=workflow_state.current_step,
+        step_data=step_data,
+        conversation_history=conversation_history,
+        agent_context=agent_context,
+        updated_at=workflow_state.updated_at
+    )
 
 # Background task for cleanup
 @app.on_event("startup")

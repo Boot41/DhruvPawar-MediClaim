@@ -103,6 +103,31 @@ class ApiService {
     });
   }
 
+  async startSession() {
+    // Create a new session and get initial state
+    const sessionResponse = await this.createSession();
+    if (sessionResponse.success) {
+      this.setSessionId(sessionResponse.data.session_id);
+      
+      // Get initial session state
+      try {
+        const stateResponse = await this.getSessionState();
+        return {
+          message: "Hello! I'm your MediClaim AI assistant. I can help you process insurance claims by analyzing your policy documents and medical bills. How can I assist you today?",
+          state: stateResponse.current_step || 'initial',
+          progress: 0
+        };
+      } catch (error) {
+        return {
+          message: "Hello! I'm your MediClaim AI assistant. How can I help you today?",
+          state: 'initial',
+          progress: 0
+        };
+      }
+    }
+    throw new Error('Failed to create session');
+  }
+
   async getSessionState() {
     return this.makeRequest(`/sessions/${this.sessionId}/state`);
   }
@@ -217,6 +242,10 @@ class ApiService {
   }
 
   // Session management
+  resetSession() {
+    this.sessionId = null;
+  }
+
   logout() {
     this.authToken = null;
     this.sessionId = null;

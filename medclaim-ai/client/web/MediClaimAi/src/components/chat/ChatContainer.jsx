@@ -111,11 +111,18 @@ const ChatContainer = () => {
           : msg
       ));
 
-      // Add bot response
-      if (response.message) {
+      // Add bot response - extract actual response content
+      let botContent = response.message;
+      if (response.data && response.data.response) {
+        botContent = response.data.response;
+      } else if (response.success && response.message === "Message processed" && response.data) {
+        botContent = response.data.response || "I've processed your message. How else can I help you?";
+      }
+      
+      if (botContent) {
         const botMessage = {
           id: Date.now() + 1,
-          content: response.message,
+          content: botContent,
           isBot: true,
           timestamp: new Date().toISOString()
         };
