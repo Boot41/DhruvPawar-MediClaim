@@ -1,0 +1,60 @@
+{
+  "c62e19916b9b55c1": {
+    "success": true,
+    "document_id": "283a3b5b-863f-4903-a294-e0d3c7de4210",
+    "document_type": "invoice",
+    "text": "Springfield General Hospital\nMedical Invoice\nInvoice # SGH-INV-2025-0822-1043\nBilling Contact: +91-80-4012-2345\nHospital Address: 12 MG Road, Bengaluru 560001, Karnataka\nPatient & Admission\nPatient: Aarav Mehta (ID: PT-00991)\nPolicy Number: POL-IN-987654\nAdmitted: 2025-08-20 10:05 (cid:127) Discharged: 2025-08-22 17:40\nDiagnosis: Acute Appendicitis\nAttending Physician: Dr. Neha Rao, MS (Gen Surg)\nCode Description Qty Unit (INR) Line Total (INR)\n44950 Appendectomy (Open) 1 120,000.0 120,000.00\n80053 Comprehensive Metabolic Panel 1 2,200.0 2,200.00\n85025 Complete Blood Count 1 950.0 950.00\n36415 Blood Draw (Venipuncture) 1 300.0 300.00\n93000 ECG with report 1 1,400.0 1,400.00\nRM-SEMPR Room Rent - Semi Private (2 nights) 2 5,000.0 10,000.00\nNSG-OT OT & Nursing Charges 1 18,000.0 18,000.00\nMED-PHARMPharmacy & Consumables 1 16,500.0 16,500.00\nSubtotal (INR): 169,350.00\nDiscount (INR): 0.00\nTax @ 0.0% (INR): 0.00\nGrand Total (INR): 169,350.00\nNotes:\nAll services are medically necessary and performed under sterile conditions.\n",
+    "chunks": [
+      {
+        "chunk_index": 0,
+        "content": "Springfield General Hospital\nMedical Invoice\nInvoice # SGH-INV-2025-0822-1043\nBilling Contact: +91-80-4012-2345\nHospital Address: 12 MG Road, Bengaluru 560001, Karnataka\nPatient & Admission\nPatient: Aarav Mehta (ID: PT-00991)\nPolicy Number: POL-IN-987654\nAdmitted: 2025-08-20 10:05 (cid:127) Discharged: 2025-08-22 17:40\nDiagnosis: Acute Appendicitis\nAttending Physician: Dr. Neha Rao, MS (Gen Surg)\nCode Description Qty Unit (INR) Line Total (INR)\n44950 Appendectomy (Open) 1 120,000.0 120,000.00\n80053 Comprehensive Metabolic Panel 1 2,200.0 2,200.00\n85025 Complete Blood Count 1 950.0 950.00\n36415 Blood Draw (Venipuncture) 1 300.0 300.00\n93000 ECG with report 1 1,400.0 1,400.00\nRM-SEMPR Room Rent - Semi Private (2 nights) 2 5,000.0 10,000.00\nNSG-OT OT & Nursing Charges 1 18,000.0 18,000.00\nMED-PHARMPharmacy & Consumables 1 16,500.0 16,500.00\nSubtotal (INR): 169,350.00\nDiscount (INR): 0.00\nTax @ 0.0% (INR): 0.00\nGrand Total (INR): 169,350.00\nNotes:",
+        "metadata": {
+          "document_type": "invoice",
+          "total_characters": 1035,
+          "processing_timestamp": "2025-09-05T04:12:25.848777",
+          "chunk_size": 957,
+          "created_at": "2025-09-05T04:12:25.849014",
+          "chunk_type": "patient_info"
+        }
+      },
+      {
+        "chunk_index": 1,
+        "content": "MED-PHARMPharmacy & Consumables 1 16,500.0 16,500.00\nSubtotal (INR): 169,350.00\nDiscount (INR): 0.00\nTax @ 0.0% (INR): 0.00\nGrand Total (INR): 169,350.00\nNotes:\nAll services are medically necessary and performed under sterile conditions.",
+        "metadata": {
+          "document_type": "invoice",
+          "total_characters": 1035,
+          "processing_timestamp": "2025-09-05T04:12:25.848777",
+          "chunk_size": 237,
+          "created_at": "2025-09-05T04:12:25.849024",
+          "chunk_type": "facility_info"
+        }
+      }
+    ],
+    "total_chunks": 2,
+    "parser": "basic",
+    "images": []
+  },
+  "55da74ac8a7978ea": {
+    "success": true,
+    "document_id": "998a3157-ae98-45c5-8707-b471d08d898a",
+    "document_type": "policy",
+    "text": "CareShield Health Insurance Co.\nPolicy Document\nPolicy Number: POL-IN-987654\nPlan: CareShield Plus (Family Floater)\nPolicy Period: 2025-04-01 to 2026-03-31\nPolicyholder\nAarav Mehta (DOB: 1992-07-11)\nPhone: +91-98-7654-3210 (cid:127) Email: aarav.mehta@example.com\nAddress: 702, Sunshine Residency, Sector 62, Noida 201301, UP\nInsured Members\nName Relationship Insured ID\nAarav Mehta Self CS-IM-0001\nRiya Mehta Spouse CS-IM-0002\nPlan Benefits\nCoverage Limit (INR) 1,000,000\nDeductible (INR) 10,000\nCo-pay (%) 10%\nRoom Rent Limit (INR) 6,000/night\nNetwork Hospital Only No\nCovered Services\nhospitalization, daycare procedures, diagnostics, prescription drugs, pre & post hospitalization (30/60\ndays)\nKey Terms\n(cid:127) Cashless available at network hospitals.\n(cid:127) Claim intimation within 24 hours of admission for cashless.\n(cid:127) Non-payables as per IRDAI guidelines excluded.\n(cid:127) Pre-authorization mandatory for planned admissions.\nPremium Paid (INR): 21,499\nStatus: Active\n",
+    "chunks": [
+      {
+        "chunk_index": 0,
+        "content": "CareShield Health Insurance Co.\nPolicy Document\nPolicy Number: POL-IN-987654\nPlan: CareShield Plus (Family Floater)\nPolicy Period: 2025-04-01 to 2026-03-31\nPolicyholder\nAarav Mehta (DOB: 1992-07-11)\nPhone: +91-98-7654-3210 (cid:127) Email: aarav.mehta@example.com\nAddress: 702, Sunshine Residency, Sector 62, Noida 201301, UP\nInsured Members\nName Relationship Insured ID\nAarav Mehta Self CS-IM-0001\nRiya Mehta Spouse CS-IM-0002\nPlan Benefits\nCoverage Limit (INR) 1,000,000\nDeductible (INR) 10,000\nCo-pay (%) 10%\nRoom Rent Limit (INR) 6,000/night\nNetwork Hospital Only No\nCovered Services\nhospitalization, daycare procedures, diagnostics, prescription drugs, pre & post hospitalization (30/60\ndays)\nKey Terms\n(cid:127) Cashless available at network hospitals.\n(cid:127) Claim intimation within 24 hours of admission for cashless.\n(cid:127) Non-payables as per IRDAI guidelines excluded.\n(cid:127) Pre-authorization mandatory for planned admissions.\nPremium Paid (INR): 21,499\nStatus: Active",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 990,
+          "processing_timestamp": "2025-09-05T04:14:49.557742",
+          "chunk_size": 989,
+          "created_at": "2025-09-05T04:14:49.557839",
+          "chunk_type": "policy_info"
+        }
+      }
+    ],
+    "total_chunks": 1,
+    "parser": "basic",
+    "images": []
+  }
+}
