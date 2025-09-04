@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../contexts/AuthContext';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import ProgressSteps from './ProgressSteps';
 import CoverageAnalysis from './CoverageAnalysis';
 import VendorSelection from './VendorSelection';
+import UserMenu from '../ui/UserMenu';
 import { Card } from '../ui/Card';
 import { Alert } from '../ui';
 import apiService from '../../services/api';
@@ -188,19 +190,22 @@ const ChatContainer = () => {
             <h1 className="text-xl font-bold text-gray-900">MediClaim AI Assistant</h1>
             <p className="text-sm text-gray-600">Your intelligent insurance claim processor</p>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={handleDemoMode}
-              className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
-            >
-              Demo Mode
-            </button>
-            <button
-              onClick={handleRestart}
-              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              Restart
-            </button>
+          <div className="flex items-center gap-4">
+            <div className="flex gap-2">
+              <button
+                onClick={handleDemoMode}
+                className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+              >
+                Demo Mode
+              </button>
+              <button
+                onClick={handleRestart}
+                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Restart
+              </button>
+            </div>
+            <UserMenu />
           </div>
         </div>
       </div>
