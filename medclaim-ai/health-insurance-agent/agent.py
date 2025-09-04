@@ -1,6 +1,8 @@
 # health_insurance_agent/agents.py
 from google.adk.agents import Agent
 from google.adk.tools import agent_tool
+
+# Use absolute imports to avoid relative import issues
 from tools import (
     policy_extract_func_tool,
     invoice_extract_func_tool,
@@ -28,6 +30,7 @@ from form_automation_tools import (
     map_data_to_fields_func_tool,
     extract_form_fields_func_tool
 )
+
 # 1. Policy Guidance Agent
 policy_guidance_agent = Agent(
     name="policy_guidance_agent",
