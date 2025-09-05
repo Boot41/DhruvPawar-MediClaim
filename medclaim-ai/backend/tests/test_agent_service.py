@@ -32,11 +32,11 @@ class TestAgentService:
     
     def test_init_failure(self):
         """Test AgentService initialization failure."""
-        with patch('agent_service.root_agent', side_effect=Exception("Agent error")):
+        with patch('agent_service.Runner', side_effect=Exception("Runner error")):
             service = AgentService()
             
             # When initialization fails, session_service should be None
-            # The actual implementation doesn't set agents to empty dict on failure
+            # The actual implementation sets session_service to None on failure
             assert service.agents is not None  # Agents are still initialized even on failure
             assert service.session_service is None  # Should be None on failure
             assert service.runners == {}  # Should be empty dict on failure

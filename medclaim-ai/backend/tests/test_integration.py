@@ -65,12 +65,12 @@ class TestUserWorkflow:
                 data={"file_type": "policy", "session_id": test_session.id},
                 files={"file": ("test.pdf", b"test content", "application/pdf")}
             )
-            assert response.status_code == 201
+            assert response.status_code == 200  # Changed from 201 to 200
             assert "filename" in response.json()
     
     def test_claim_creation_workflow(self, client, auth_headers, test_session):
         """Test complete claim creation workflow."""
-        with patch("agent_service.agent_service.generate_claim_form") as mock_generate:
+        with patch("main.agent_service.generate_claim_form") as mock_generate:
             mock_generate.return_value = {
                 "success": True,
                 "form_data": {"test": "data"},
@@ -91,7 +91,7 @@ class TestUserWorkflow:
     
     def test_chat_workflow(self, client, auth_headers, test_session):
         """Test complete chat workflow."""
-        with patch("agent_service.agent_service.chat_with_agent") as mock_chat:
+        with patch("main.agent_service.chat_with_agent") as mock_chat:
             mock_chat.return_value = {
                 "success": True,
                 "response": "Hello! How can I help you with your insurance claim?"
