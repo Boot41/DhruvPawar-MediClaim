@@ -1,3 +1,4 @@
+https://www.loom.com/share/ed4b2dce144e490ca7adf88916dba6aa?sid=407085f8-d828-4e55-a452-811bdc43884f
 # 🏥 MediClaim AI - Intelligent Insurance Claim Processing System
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -128,53 +129,6 @@ npm start
 - **SQLite** - Lightweight, serverless database
 - **PostgreSQL** - Advanced open-source relational database (production)
 - **File System** - Secure local file storage
-
-## 📁 Project Structure
-
-```
-medclaim-ai/
-├── backend/                    # FastAPI backend application
-│   ├── apis/                   # API endpoints organized by category
-│   │   ├── auth/              # Authentication endpoints
-│   │   ├── document/          # Document management endpoints
-│   │   ├── claim/             # Claim processing endpoints
-│   │   └── chat/              # Chat assistant endpoints
-│   ├── business_logic/         # Core business logic
-│   │   ├── document/          # Document processing logic
-│   │   ├── claim/             # Claim processing logic
-│   │   └── agent/             # Agent orchestration logic
-│   ├── agents/                # AI agents and tools
-│   │   ├── tools/             # Agent tools and utilities
-│   │   ├── instructions/      # Agent instructions and prompts
-│   │   └── agents.py          # Agent definitions
-│   ├── utils/                 # Utility functions and helpers
-│   ├── config/                # Configuration and settings
-│   ├── tests/                 # Comprehensive test suite
-│   ├── templates/             # PDF templates
-│   ├── uploads/               # File upload storage
-│   ├── main.py                # FastAPI application entry point
-│   ├── database.py            # Database models and schemas
-│   ├── schemas.py             # Pydantic schemas for API validation
-│   └── requirements.txt       # Python dependencies
-├── frontend/                   # React frontend application
-│   ├── public/                # Static assets
-│   ├── src/
-│   │   ├── components/        # Reusable React components
-│   │   ├── contexts/          # React context providers
-│   │   ├── services/          # API service functions
-│   │   ├── App.tsx            # Main application component
-│   │   └── index.tsx          # Application entry point
-│   ├── package.json           # Node.js dependencies
-│   └── tailwind.config.js     # Tailwind CSS configuration
-├── processed/                  # Processed document outputs
-├── sample_docs/               # Sample documents for testing
-├── product/                   # Product documentation
-│   ├── architecture.md        # System architecture documentation
-│   ├── technical_spec.md      # Technical specifications
-│   └── tasks.md               # Development tasks and roadmap
-├── deliverables/              # Project deliverables
-└── README.md                  # This file
-```
 
 ## 🔧 Configuration
 
