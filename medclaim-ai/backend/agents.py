@@ -62,11 +62,31 @@ def calculate_coverage_tool(policy_data: str, invoice_data: str) -> Dict[str, An
         policy = json.loads(policy_data)
         invoice = json.loads(invoice_data)
         
-        # Basic coverage calculation
-        total_cost = invoice.get("total_amount", 0)
-        deductible = policy.get("deductible", 0)
-        copay_pct = policy.get("copay_percentage", 0) / 100
-        coverage_limit = policy.get("coverage_amount", float('inf'))
+        # Ensure all values are properly converted to float
+        def safe_float(value, default=0.0):
+            """Safely convert value to float, handling various formats."""
+            if value is None:
+                return default
+            try:
+                return float(value)
+            except (ValueError, TypeError):
+                return default
+        
+        # Basic coverage calculation with safe conversion
+        total_cost = safe_float(invoice.get("total_amount", 0))
+        deductible = safe_float(policy.get("deductible", 0))
+        copay_pct = safe_float(policy.get("copay_percentage", 0))
+        coverage_limit = safe_float(policy.get("coverage_amount", float('inf')))
+        
+        # Handle percentage conversion if needed
+        if copay_pct > 1:
+            copay_pct = copay_pct / 100
+        
+        # Ensure values are non-negative
+        total_cost = max(0, total_cost)
+        deductible = max(0, deductible)
+        copay_pct = max(0, min(1, copay_pct))  # Clamp between 0 and 1
+        coverage_limit = max(0, coverage_limit) if coverage_limit != float('inf') else float('inf')
         
         if total_cost <= deductible:
             out_of_pocket = total_cost
@@ -79,8 +99,8 @@ def calculate_coverage_tool(policy_data: str, invoice_data: str) -> Dict[str, An
         return {
             "success": True,
             "coverage_analysis": {
-                "total_cost": total_cost,
-                "deductible_applied": min(deductible, total_cost),
+                "total_cost": round(total_cost, 2),
+                "deductible_applied": round(min(deductible, total_cost), 2),
                 "insurance_covers": round(insurance_covers, 2),
                 "out_of_pocket": round(out_of_pocket, 2),
                 "coverage_percentage": round((insurance_covers / total_cost) * 100, 2) if total_cost > 0 else 0

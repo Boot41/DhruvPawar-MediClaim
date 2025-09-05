@@ -291,11 +291,15 @@ class AgentService:
                     "error": "Both policy and invoice documents are required for coverage calculation"
                 }
             
+            # Clean the data to remove currency symbols and percentage signs
+            cleaned_policy_data = self._clean_document_data(policy_data)
+            cleaned_invoice_data = self._clean_document_data(invoice_data)
+            
             # Use coverage analyzer agent
             response = await self._run_agent_async("coverage_analyzer", {
                 "message": "Calculate insurance coverage based on the policy and invoice data",
-                "policy_data": json.dumps(policy_data),
-                "invoice_data": json.dumps(invoice_data)
+                "policy_data": json.dumps(cleaned_policy_data),
+                "invoice_data": json.dumps(cleaned_invoice_data)
             })
             
             return {
@@ -698,6 +702,75 @@ class AgentService:
             except ValueError:
                 pass
         return 0
+    
+    def _clean_numerical_value(self, value: Any) -> float:
+        """Clean numerical value by removing currency symbols, percentage signs, and converting to float."""
+        if value is None:
+            return 0.0
+        
+        # Convert to string if not already
+        str_value = str(value).strip()
+        
+        # Remove currency symbols and common prefixes
+        currency_patterns = [
+            r'^[₹$€£¥]',  # Currency symbols at start
+            r'^Rs\.?\s*',  # Rs. prefix
+            r'^INR\s*',    # INR prefix
+            r'^USD\s*',    # USD prefix
+        ]
+        
+        for pattern in currency_patterns:
+            str_value = re.sub(pattern, '', str_value, flags=re.IGNORECASE)
+        
+        # Remove percentage signs and convert to decimal
+        if '%' in str_value:
+            str_value = str_value.replace('%', '')
+            # If it's a percentage, convert to decimal (divide by 100)
+            try:
+                return float(str_value) / 100.0
+            except ValueError:
+                return 0.0
+        
+        # Handle lakh/crore conversions before removing all non-numeric characters
+        if 'lakh' in str_value.lower() or 'lac' in str_value.lower():
+            str_value = re.sub(r'[^\d.-]', '', str_value)
+            try:
+                return float(str_value) * 100000
+            except ValueError:
+                return 0.0
+        elif 'crore' in str_value.lower() or 'cr' in str_value.lower():
+            str_value = re.sub(r'[^\d.-]', '', str_value)
+            try:
+                return float(str_value) * 10000000
+            except ValueError:
+                return 0.0
+        
+        # Remove commas and other non-numeric characters except decimal point
+        str_value = re.sub(r'[^\d.-]', '', str_value)
+        
+        # Convert to float
+        try:
+            return float(str_value) if str_value else 0.0
+        except ValueError:
+            return 0.0
+    
+    def _clean_document_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Clean document data by removing currency symbols and percentage signs from numerical fields."""
+        cleaned_data = {}
+        
+        # Fields that should be cleaned as numerical values
+        numerical_fields = [
+            'coverage_amount', 'deductible', 'total_amount', 'copay_percentage',
+            'sum_insured', 'limit', 'amount', 'cost', 'charges', 'bill'
+        ]
+        
+        for key, value in data.items():
+            if key.lower() in numerical_fields:
+                cleaned_data[key] = self._clean_numerical_value(value)
+            else:
+                cleaned_data[key] = value
+        
+        return cleaned_data
     
     def _extract_procedures_from_text(self, text: str) -> list:
         """Extract procedures from text using patterns."""
