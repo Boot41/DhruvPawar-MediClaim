@@ -1,7 +1,7 @@
 /**
  * PDF Viewer Component
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Download, ExternalLink, AlertCircle } from 'lucide-react';
 
 interface PDFViewerProps {
@@ -14,6 +14,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl, filename, className = '' 
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
+  const blobUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
     const fetchPDF = async () => {
@@ -40,6 +41,13 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl, filename, className = '' 
         
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
+        
+        // Clean up previous blob URL
+        if (blobUrlRef.current) {
+          URL.revokeObjectURL(blobUrlRef.current);
+        }
+        
+        blobUrlRef.current = url;
         setPdfDataUrl(url);
         setIsLoading(false);
       } catch (error) {
@@ -50,14 +58,16 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl, filename, className = '' 
     };
     
     fetchPDF();
-    
-    // Cleanup blob URL on unmount
+  }, [pdfUrl]);
+
+  // Cleanup effect for blob URL on unmount
+  useEffect(() => {
     return () => {
-      if (pdfDataUrl) {
-        URL.revokeObjectURL(pdfDataUrl);
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
       }
     };
-  }, [pdfUrl, pdfDataUrl]);
+  }, []);
 
   if (isLoading) {
     return (
