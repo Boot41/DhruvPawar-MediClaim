@@ -429,5 +429,13 @@
     "total_chunks": 8,
     "parser": "basic",
     "images": []
+  },
+  "b95bd96f-32ed-48": {
+    "success": false,
+    "error": "No text could be extracted from the document"
+  },
+  "7be51a93-7f23-44": {
+    "success": false,
+    "error": "No text could be extracted from the document"
   }
 }

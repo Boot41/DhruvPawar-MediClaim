@@ -77,8 +77,8 @@ class TestUserAuthentication:
     
     def test_get_current_user_success(self, db_session, test_user):
         """Test getting current user with valid token."""
-        # Create a valid token
-        data = {"sub": test_user.email}
+        # Create a valid token with user ID (not email)
+        data = {"sub": test_user.id}  # Changed from email to user ID
         token = create_access_token(data)
         
         # Create mock credentials
@@ -92,9 +92,9 @@ class TestUserAuthentication:
         assert user.id == test_user.id
     
     def test_get_current_user_not_found(self, db_session):
-        """Test getting current user with non-existent email."""
-        # Create a token for non-existent user
-        data = {"sub": "nonexistent@example.com"}
+        """Test getting current user with non-existent user ID."""
+        # Create a token for non-existent user ID
+        data = {"sub": "nonexistent-user-id"}
         token = create_access_token(data)
         
         # Create mock credentials
