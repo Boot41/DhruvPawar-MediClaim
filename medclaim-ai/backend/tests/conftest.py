@@ -123,10 +123,12 @@ def auth_headers(test_user):
 @pytest.fixture
 def test_session(db_session, test_user):
     """Create a test user session."""
+    from datetime import datetime, timedelta
     session = UserSession(
         user_id=test_user.id,
         session_token="test-session-token",
-        is_active=True
+        is_active=True,
+        expires_at=datetime.utcnow() + timedelta(hours=24)
     )
     db_session.add(session)
     db_session.commit()

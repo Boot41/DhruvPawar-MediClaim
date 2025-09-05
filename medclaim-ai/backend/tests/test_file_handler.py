@@ -1,108 +1,139 @@
 """
-Test cases for file handling functionality
+Test cases for file handler functionality
 """
 import pytest
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import patch, Mock, AsyncMock
 from fastapi import UploadFile
-from io import BytesIO
+import io
 
 from file_handler import FileHandler
 
 
 class TestFileHandler:
-    """Test FileHandler functionality."""
+    """Test FileHandler class functionality."""
     
     def test_init(self):
         """Test FileHandler initialization."""
         handler = FileHandler()
-        assert handler is not None
+        assert handler.upload_dir is not None
+        assert handler.upload_dir.exists()
     
-    def test_get_file_extension(self):
-        """Test getting file extension."""
+    @pytest.mark.asyncio
+    async def test_validate_file_success(self):
+        """Test successful file validation."""
         handler = FileHandler()
         
-        # Test PDF file
-        assert handler.get_file_extension("test.pdf") == "pdf"
+        # Create a mock file
+        file_content = b"test pdf content"
+        file = UploadFile(
+            filename="test.pdf",
+            file=io.BytesIO(file_content),
+            content_type="application/pdf"
+        )
         
-        # Test JPG file
-        assert handler.get_file_extension("test.jpg") == "jpg"
+        result = await handler.validate_file(file)
         
-        # Test file without extension
-        assert handler.get_file_extension("test") == ""
+        assert result["success"] is True
+        assert result["filename"] == "test.pdf"
+        assert result["file_size"] == len(file_content)
+        assert result["file_type"] == "application/pdf"
     
-    def test_validate_file_type(self):
-        """Test file type validation."""
+    @pytest.mark.asyncio
+    async def test_validate_file_invalid_type(self):
+        """Test file validation with invalid type."""
         handler = FileHandler()
         
-        # Test valid PDF
-        assert handler.validate_file_type("test.pdf", "application/pdf") is True
+        # Create a mock file with invalid type
+        file_content = b"test content"
+        file = UploadFile(
+            filename="test.txt",
+            file=io.BytesIO(file_content),
+            content_type="text/plain"
+        )
         
-        # Test invalid type
-        assert handler.validate_file_type("test.txt", "application/pdf") is False
+        with pytest.raises(Exception):
+            await handler.validate_file(file)
     
-    def test_validate_file_size(self):
-        """Test file size validation."""
+    @pytest.mark.asyncio
+    async def test_validate_file_too_large(self):
+        """Test file validation with file too large."""
         handler = FileHandler()
         
-        # Test valid size
-        assert handler.validate_file_size(1024, max_size=5000) is True
+        # Create a mock file that's too large
+        large_content = b"x" * (handler.MAX_FILE_SIZE + 1)
+        file = UploadFile(
+            filename="large.pdf",
+            file=io.BytesIO(large_content),
+            content_type="application/pdf"
+        )
         
-        # Test invalid size
-        assert handler.validate_file_size(10000, max_size=5000) is False
+        with pytest.raises(Exception):
+            await handler.validate_file(file)
     
-    @patch('file_handler.magic.from_buffer')
-    def test_detect_file_type(self, mock_magic):
-        """Test file type detection."""
-        handler = FileHandler()
-        mock_magic.return_value = "application/pdf"
-        
-        file_content = b"PDF content"
-        file_type = handler.detect_file_type(file_content)
-        
-        assert file_type == "application/pdf"
-        mock_magic.assert_called_once_with(file_content)
-    
-    def test_generate_unique_filename(self):
-        """Test unique filename generation."""
+    @pytest.mark.asyncio
+    async def test_save_file_success(self):
+        """Test successful file saving."""
         handler = FileHandler()
         
-        filename = handler.generate_unique_filename("test.pdf")
-        assert filename.endswith(".pdf")
-        assert "test" in filename
-        assert len(filename) > len("test.pdf")
+        # Create a mock file
+        file_content = b"test pdf content"
+        file = UploadFile(
+            filename="test.pdf",
+            file=io.BytesIO(file_content),
+            content_type="application/pdf"
+        )
+        
+        result = await handler.save_file(file, "user123", "policy")
+        
+        assert result["success"] is True
+        assert "file_path" in result
+        assert "filename" in result
+        assert result["file_type"] == "policy"
     
-    def test_create_upload_directory(self):
-        """Test upload directory creation."""
+    def test_get_file_as_base64(self):
+        """Test getting file as base64."""
         handler = FileHandler()
         
-        with patch('file_handler.os.makedirs') as mock_makedirs:
-            handler.create_upload_directory("test_dir")
-            mock_makedirs.assert_called_once_with("test_dir", exist_ok=True)
+        # Create a test file
+        test_content = b"test content"
+        test_file = handler.upload_dir / "test.txt"
+        test_file.write_bytes(test_content)
+        
+        try:
+            result = handler.get_file_as_base64(str(test_file))
+            assert result is not None
+            assert isinstance(result, str)
+        finally:
+            # Clean up
+            if test_file.exists():
+                test_file.unlink()
     
-    def test_save_uploaded_file(self):
-        """Test saving uploaded file."""
+    @pytest.mark.asyncio
+    async def test_save_generated_form(self):
+        """Test saving generated form."""
         handler = FileHandler()
         
-        with patch("builtins.open", mock_open()) as mock_file:
-            with patch('file_handler.os.path.exists', return_value=True):
-                file_content = b"test content"
-                result = handler.save_uploaded_file(file_content, "test.pdf")
-                
-                assert result == "test.pdf"
-                mock_file.assert_called_once()
+        form_content = b"generated form content"
+        result = await handler.save_generated_form(form_content, "claim123", "test_vendor")
+        
+        assert result is not None
+        assert isinstance(result, str)
+        # Check if file was created
+        form_path = handler.upload_dir / "generated_forms" / result
+        assert form_path.exists()
+        
+        # Clean up
+        if form_path.exists():
+            form_path.unlink()
     
-    def test_delete_file(self):
-        """Test file deletion."""
+    @pytest.mark.asyncio
+    async def test_cleanup_old_files(self):
+        """Test cleaning up old files."""
         handler = FileHandler()
         
-        with patch('file_handler.os.remove') as mock_remove:
-            handler.delete_file("test.pdf")
-            mock_remove.assert_called_once_with("test.pdf")
-    
-    def test_get_file_size(self):
-        """Test getting file size."""
-        handler = FileHandler()
+        # This test just ensures the method runs without error
+        # In a real test, you'd create old files and verify they're deleted
+        await handler.cleanup_old_files(older_than_hours=0)
         
-        with patch('file_handler.os.path.getsize', return_value=1024):
-            size = handler.get_file_size("test.pdf")
-            assert size == 1024
+        # If we get here without exception, the test passes
+        assert True

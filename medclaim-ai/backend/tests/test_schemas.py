@@ -8,8 +8,9 @@ from pydantic import ValidationError
 from schemas import (
     UserCreate, UserResponse, UserLogin, Token,
     DocumentUpload, DocumentResponse, DocumentChunkResponse,
-    ClaimCreate, ClaimResponse, VendorResponse, WorkflowStateResponse,
-    ChatMessageCreate, ChatMessageResponse
+    ClaimInitiate, ClaimStatus, ClaimFormPreview, ClaimSubmission,
+    VendorResponse, WorkflowState, CoverageAnalysis, CoverageRequest,
+    ChatMessage, ChatResponse, SuccessResponse, ErrorResponse, HealthCheck
 )
 
 
@@ -41,15 +42,14 @@ class TestUserSchemas:
     def test_user_response(self):
         """Test UserResponse schema."""
         user_data = {
-            "id": 1,
+            "id": "test-id-123",
             "email": "test@example.com",
             "full_name": "Test User",
             "is_active": True,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+            "created_at": datetime.utcnow()
         }
         user = UserResponse(**user_data)
-        assert user.id == 1
+        assert user.id == "test-id-123"
         assert user.email == "test@example.com"
         assert user.is_active is True
 
@@ -61,56 +61,66 @@ class TestDocumentSchemas:
         """Test DocumentUpload with valid data."""
         doc_data = {
             "file_type": "policy",
-            "filename": "test.pdf"
+            "session_id": "test-session-123"
         }
         doc = DocumentUpload(**doc_data)
         assert doc.file_type == "policy"
-        assert doc.filename == "test.pdf"
+        assert doc.session_id == "test-session-123"
     
     def test_document_response(self):
         """Test DocumentResponse schema."""
         doc_data = {
-            "id": 1,
+            "id": "doc-123",
             "filename": "test.pdf",
             "original_filename": "test.pdf",
             "file_type": "policy",
-            "file_size": 1024,
             "upload_status": "uploaded",
+            "extracted_data": {"test": "data"},
+            "total_chunks": 5,
             "created_at": datetime.utcnow()
         }
         doc = DocumentResponse(**doc_data)
-        assert doc.id == 1
+        assert doc.id == "doc-123"
         assert doc.filename == "test.pdf"
         assert doc.file_type == "policy"
-        assert doc.file_size == 1024
+        assert doc.upload_status == "uploaded"
 
 
 class TestClaimSchemas:
     """Test claim-related schemas."""
     
-    def test_claim_create_valid(self):
-        """Test ClaimCreate with valid data."""
+    def test_claim_initiate_valid(self):
+        """Test ClaimInitiate with valid data."""
         claim_data = {
-            "claim_data": {"test": "data"},
-            "form_data": {"test": "data"}
+            "session_id": "test-session"
         }
-        claim = ClaimCreate(**claim_data)
-        assert claim.claim_data == {"test": "data"}
-        assert claim.form_data == {"test": "data"}
+        claim = ClaimInitiate(**claim_data)
+        assert claim.session_id == "test-session"
     
-    def test_claim_response(self):
-        """Test ClaimResponse schema."""
+    def test_claim_status(self):
+        """Test ClaimStatus schema."""
         claim_data = {
-            "id": 1,
+            "claim_id": "test-claim-123",
             "status": "initiated",
-            "claim_data": {"test": "data"},
-            "form_data": {"test": "data"},
-            "created_at": datetime.utcnow()
+            "created_at": datetime.utcnow(),
+            "claim_data": {"test": "data"}
         }
-        claim = ClaimResponse(**claim_data)
-        assert claim.id == 1
+        claim = ClaimStatus(**claim_data)
+        assert claim.claim_id == "test-claim-123"
         assert claim.status == "initiated"
         assert claim.claim_data == {"test": "data"}
+    
+    def test_claim_form_preview(self):
+        """Test ClaimFormPreview schema."""
+        form_data = {
+            "form_data": {"test": "data"},
+            "preview_html": "<html>test</html>",
+            "missing_fields": []
+        }
+        form = ClaimFormPreview(**form_data)
+        assert form.form_data == {"test": "data"}
+        assert form.preview_html == "<html>test</html>"
+        assert form.missing_fields == []
 
 
 class TestVendorSchemas:
@@ -119,15 +129,14 @@ class TestVendorSchemas:
     def test_vendor_response(self):
         """Test VendorResponse schema."""
         vendor_data = {
-            "id": 1,
+            "id": "vendor-123",
             "name": "test_insurance",
             "display_name": "Test Insurance Company",
             "form_template_url": "https://example.com/template.pdf",
-            "is_active": True,
-            "created_at": datetime.utcnow()
+            "is_active": True
         }
         vendor = VendorResponse(**vendor_data)
-        assert vendor.id == 1
+        assert vendor.id == "vendor-123"
         assert vendor.name == "test_insurance"
         assert vendor.display_name == "Test Insurance Company"
         assert vendor.is_active is True
@@ -136,45 +145,117 @@ class TestVendorSchemas:
 class TestWorkflowSchemas:
     """Test workflow-related schemas."""
     
-    def test_workflow_state_response(self):
-        """Test WorkflowStateResponse schema."""
+    def test_workflow_state(self):
+        """Test WorkflowState schema."""
         workflow_data = {
-            "id": 1,
             "current_step": "document_upload",
             "step_data": {"test": "data"},
-            "conversation_history": [{"role": "user", "content": "test"}],
-            "created_at": datetime.utcnow()
+            "conversation_history": [{"role": "user", "content": "test"}]
         }
-        workflow = WorkflowStateResponse(**workflow_data)
-        assert workflow.id == 1
+        workflow = WorkflowState(**workflow_data)
         assert workflow.current_step == "document_upload"
         assert workflow.step_data == {"test": "data"}
+
+
+class TestCoverageSchemas:
+    """Test coverage-related schemas."""
+    
+    def test_coverage_analysis(self):
+        """Test CoverageAnalysis schema."""
+        coverage_data = {
+            "total_cost": 1000.0,
+            "deductible_applied": 100.0,
+            "insurance_covers": 800.0,
+            "out_of_pocket": 200.0,
+            "coverage_percentage": 80.0
+        }
+        coverage = CoverageAnalysis(**coverage_data)
+        assert coverage.total_cost == 1000.0
+        assert coverage.deductible_applied == 100.0
+        assert coverage.insurance_covers == 800.0
+        assert coverage.out_of_pocket == 200.0
+        assert coverage.coverage_percentage == 80.0
+    
+    def test_coverage_request(self):
+        """Test CoverageRequest schema."""
+        request_data = {
+            "session_id": "test-session",
+            "policy_data": {"test": "policy"},
+            "invoice_data": {"test": "invoice"}
+        }
+        request = CoverageRequest(**request_data)
+        assert request.session_id == "test-session"
+        assert request.policy_data == {"test": "policy"}
+        assert request.invoice_data == {"test": "invoice"}
 
 
 class TestChatSchemas:
     """Test chat-related schemas."""
     
-    def test_chat_message_create_valid(self):
-        """Test ChatMessageCreate with valid data."""
+    def test_chat_message(self):
+        """Test ChatMessage schema."""
         message_data = {
-            "message_type": "user",
-            "content": "Test message"
+            "message": "Test message",
+            "session_id": "test-session"
         }
-        message = ChatMessageCreate(**message_data)
-        assert message.message_type == "user"
-        assert message.content == "Test message"
+        message = ChatMessage(**message_data)
+        assert message.message == "Test message"
+        assert message.session_id == "test-session"
     
-    def test_chat_message_response(self):
-        """Test ChatMessageResponse schema."""
-        message_data = {
-            "id": 1,
-            "message_type": "user",
-            "content": "Test message",
-            "agent_name": None,
-            "created_at": datetime.utcnow()
+    def test_chat_response(self):
+        """Test ChatResponse schema."""
+        response_data = {
+            "response": "Test response",
+            "agent_name": "chat_assistant",
+            "metadata": {"test": "data"},
+            "timestamp": datetime.utcnow()
         }
-        message = ChatMessageResponse(**message_data)
-        assert message.id == 1
-        assert message.message_type == "user"
-        assert message.content == "Test message"
-        assert message.agent_name is None
+        response = ChatResponse(**response_data)
+        assert response.response == "Test response"
+        assert response.agent_name == "chat_assistant"
+        assert response.metadata == {"test": "data"}
+        assert response.timestamp is not None
+
+
+class TestUtilitySchemas:
+    """Test utility schemas."""
+    
+    def test_success_response(self):
+        """Test SuccessResponse schema."""
+        response_data = {
+            "success": True,
+            "message": "Operation successful",
+            "data": {"test": "data"}
+        }
+        response = SuccessResponse(**response_data)
+        assert response.success is True
+        assert response.message == "Operation successful"
+        assert response.data == {"test": "data"}
+    
+    def test_error_response(self):
+        """Test ErrorResponse schema."""
+        error_data = {
+            "success": False,
+            "error": "Something went wrong",
+            "details": {"test": "error"}
+        }
+        error = ErrorResponse(**error_data)
+        assert error.success is False
+        assert error.error == "Something went wrong"
+        assert error.details == {"test": "error"}
+    
+    def test_health_check(self):
+        """Test HealthCheck schema."""
+        health_data = {
+            "status": "healthy",
+            "version": "1.0.0",
+            "database": "connected",
+            "agents": "active",
+            "timestamp": datetime.utcnow()
+        }
+        health = HealthCheck(**health_data)
+        assert health.status == "healthy"
+        assert health.version == "1.0.0"
+        assert health.database == "connected"
+        assert health.agents == "active"
+        assert health.timestamp is not None

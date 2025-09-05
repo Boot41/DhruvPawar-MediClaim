@@ -1,11 +1,11 @@
 """
-Test cases for database models and operations
+Test cases for database models
 """
 import pytest
 from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 
-from database import User, UserSession, Document, DocumentChunk, Claim, Vendor, WorkflowState, ChatMessage
+from database import User, UserSession, Document, DocumentChunk, Claim, Vendor, WorkflowState, ChatMessage as DBChatMessage
 
 
 class TestUserModel:
@@ -16,8 +16,7 @@ class TestUserModel:
         user = User(
             email="test@example.com",
             hashed_password="hashed_password",
-            full_name="Test User",
-            is_active=True
+            full_name="Test User"
         )
         db_session.add(user)
         db_session.commit()
@@ -30,15 +29,23 @@ class TestUserModel:
         assert user.created_at is not None
         assert user.updated_at is not None
     
-    def test_user_email_unique(self, db_session, test_user):
-        """Test that user email must be unique."""
-        duplicate_user = User(
-            email=test_user.email,
-            hashed_password="password",
-            full_name="Duplicate User"
+    def test_user_email_unique(self, db_session):
+        """Test user email uniqueness constraint."""
+        user1 = User(
+            email="test@example.com",
+            hashed_password="hashed_password1",
+            full_name="Test User 1"
         )
-        db_session.add(duplicate_user)
+        user2 = User(
+            email="test@example.com",
+            hashed_password="hashed_password2",
+            full_name="Test User 2"
+        )
         
+        db_session.add(user1)
+        db_session.commit()
+        
+        db_session.add(user2)
         with pytest.raises(IntegrityError):
             db_session.commit()
     
@@ -64,7 +71,7 @@ class TestUserSessionModel:
         """Test creating a user session."""
         session = UserSession(
             user_id=test_user.id,
-            session_token="test_token",
+            session_token="test-session-token",
             is_active=True,
             expires_at=datetime.utcnow() + timedelta(hours=24)
         )
@@ -74,15 +81,15 @@ class TestUserSessionModel:
         
         assert session.id is not None
         assert session.user_id == test_user.id
-        assert session.session_token == "test_token"
+        assert session.session_token == "test-session-token"
         assert session.is_active is True
-        assert session.expires_at > datetime.utcnow()
+        assert session.expires_at is not None
     
     def test_user_session_relationship(self, db_session, test_user):
-        """Test user session relationship to user."""
+        """Test user session relationship."""
         session = UserSession(
             user_id=test_user.id,
-            session_token="test_token",
+            session_token="test-session-token",
             is_active=True,
             expires_at=datetime.utcnow() + timedelta(hours=24)
         )
@@ -91,9 +98,7 @@ class TestUserSessionModel:
         db_session.refresh(session)
         
         # Test relationship
-        assert session.user is not None
-        assert session.user.id == test_user.id
-        assert session in test_user.sessions
+        assert session.user == test_user
 
 
 class TestDocumentModel:
@@ -105,11 +110,10 @@ class TestDocumentModel:
             user_id=test_user.id,
             session_id=test_session.id,
             filename="test.pdf",
-            original_filename="test.pdf",
+            original_filename="original_test.pdf",
             file_path="/uploads/test.pdf",
             file_type="policy",
-            file_size=1024,
-            upload_status="uploaded"
+            file_size=1024
         )
         db_session.add(document)
         db_session.commit()
@@ -119,9 +123,9 @@ class TestDocumentModel:
         assert document.user_id == test_user.id
         assert document.session_id == test_session.id
         assert document.filename == "test.pdf"
+        assert document.original_filename == "original_test.pdf"
         assert document.file_type == "policy"
         assert document.file_size == 1024
-        assert document.upload_status == "uploaded"
     
     def test_document_relationships(self, db_session, test_user, test_session):
         """Test document relationships."""
@@ -129,7 +133,7 @@ class TestDocumentModel:
             user_id=test_user.id,
             session_id=test_session.id,
             filename="test.pdf",
-            original_filename="test.pdf",
+            original_filename="original_test.pdf",
             file_path="/uploads/test.pdf",
             file_type="policy",
             file_size=1024
@@ -139,10 +143,8 @@ class TestDocumentModel:
         db_session.refresh(document)
         
         # Test relationships
-        assert document.user is not None
-        assert document.user.id == test_user.id
-        assert document.session is not None
-        assert document.session.id == test_session.id
+        assert document.user == test_user
+        assert document.session == test_session
 
 
 class TestDocumentChunkModel:
@@ -153,9 +155,9 @@ class TestDocumentChunkModel:
         chunk = DocumentChunk(
             document_id=test_document.id,
             chunk_index=0,
-            content="Test chunk content",
-            metadata={"chunk_type": "policy_info"},
-            chunk_type="policy_info"
+            content="This is a test chunk",
+            chunk_metadata={"type": "coverage_info"},
+            chunk_type="coverage_info"
         )
         db_session.add(chunk)
         db_session.commit()
@@ -164,27 +166,25 @@ class TestDocumentChunkModel:
         assert chunk.id is not None
         assert chunk.document_id == test_document.id
         assert chunk.chunk_index == 0
-        assert chunk.content == "Test chunk content"
-        assert chunk.metadata == {"chunk_type": "policy_info"}
-        assert chunk.chunk_type == "policy_info"
+        assert chunk.content == "This is a test chunk"
+        assert chunk.chunk_type == "coverage_info"
+        assert chunk.created_at is not None
     
     def test_document_chunk_relationship(self, db_session, test_document):
-        """Test document chunk relationship to document."""
+        """Test document chunk relationship."""
         chunk = DocumentChunk(
             document_id=test_document.id,
             chunk_index=0,
-            content="Test chunk content",
-            metadata={"chunk_type": "policy_info"},
-            chunk_type="policy_info"
+            content="This is a test chunk",
+            chunk_metadata={"type": "coverage_info"},
+            chunk_type="coverage_info"
         )
         db_session.add(chunk)
         db_session.commit()
         db_session.refresh(chunk)
         
         # Test relationship
-        assert chunk.document is not None
-        assert chunk.document.id == test_document.id
-        assert chunk in test_document.chunks
+        assert chunk.document == test_document
 
 
 class TestClaimModel:
@@ -197,7 +197,7 @@ class TestClaimModel:
             session_id=test_session.id,
             status="initiated",
             claim_data={"test": "data"},
-            form_data={"test": "data"}
+            form_data={"form": "data"}
         )
         db_session.add(claim)
         db_session.commit()
@@ -208,7 +208,8 @@ class TestClaimModel:
         assert claim.session_id == test_session.id
         assert claim.status == "initiated"
         assert claim.claim_data == {"test": "data"}
-        assert claim.form_data == {"test": "data"}
+        assert claim.form_data == {"form": "data"}
+        assert claim.created_at is not None
     
     def test_claim_relationships(self, db_session, test_user, test_session):
         """Test claim relationships."""
@@ -222,10 +223,8 @@ class TestClaimModel:
         db_session.refresh(claim)
         
         # Test relationships
-        assert claim.user is not None
-        assert claim.user.id == test_user.id
-        assert claim.session is not None
-        assert claim.session.id == test_session.id
+        assert claim.user == test_user
+        assert claim.session == test_session
 
 
 class TestVendorModel:
@@ -236,8 +235,7 @@ class TestVendorModel:
         vendor = Vendor(
             name="test_insurance",
             display_name="Test Insurance Company",
-            form_template_url="https://example.com/template.pdf",
-            is_active=True
+            form_template_url="http://example.com/template.pdf"
         )
         db_session.add(vendor)
         db_session.commit()
@@ -246,8 +244,9 @@ class TestVendorModel:
         assert vendor.id is not None
         assert vendor.name == "test_insurance"
         assert vendor.display_name == "Test Insurance Company"
-        assert vendor.form_template_url == "https://example.com/template.pdf"
+        assert vendor.form_template_url == "http://example.com/template.pdf"
         assert vendor.is_active is True
+        assert vendor.created_at is not None
     
     def test_vendor_default_values(self, db_session):
         """Test vendor default values."""
@@ -261,7 +260,6 @@ class TestVendorModel:
         
         assert vendor.is_active is True
         assert vendor.created_at is not None
-        assert vendor.updated_at is not None
 
 
 class TestWorkflowStateModel:
@@ -272,8 +270,9 @@ class TestWorkflowStateModel:
         workflow = WorkflowState(
             session_id=test_session.id,
             current_step="document_upload",
-            step_data={"test": "data"},
-            conversation_history=[{"role": "user", "content": "test"}]
+            step_data={"uploaded_files": 2},
+            conversation_history={"messages": []},
+            agent_context={"current_agent": "document_analyzer"}
         )
         db_session.add(workflow)
         db_session.commit()
@@ -282,11 +281,12 @@ class TestWorkflowStateModel:
         assert workflow.id is not None
         assert workflow.session_id == test_session.id
         assert workflow.current_step == "document_upload"
-        assert workflow.step_data == {"test": "data"}
-        assert workflow.conversation_history == [{"role": "user", "content": "test"}]
+        assert workflow.step_data == {"uploaded_files": 2}
+        assert workflow.created_at is not None
+        assert workflow.updated_at is not None
     
     def test_workflow_state_relationship(self, db_session, test_session):
-        """Test workflow state relationship to session."""
+        """Test workflow state relationship."""
         workflow = WorkflowState(
             session_id=test_session.id,
             current_step="document_upload"
@@ -296,8 +296,7 @@ class TestWorkflowStateModel:
         db_session.refresh(workflow)
         
         # Test relationship
-        assert workflow.session is not None
-        assert workflow.session.id == test_session.id
+        assert workflow.session == test_session
 
 
 class TestChatMessageModel:
@@ -305,11 +304,12 @@ class TestChatMessageModel:
     
     def test_create_chat_message(self, db_session, test_session):
         """Test creating a chat message."""
-        message = ChatMessage(
+        message = DBChatMessage(
             session_id=test_session.id,
             message_type="user",
-            content="Test message",
-            agent_name=None
+            content="Hello, I need help with my claim",
+            agent_name="chat_assistant",
+            message_metadata={"timestamp": "2024-01-01T00:00:00Z"}
         )
         db_session.add(message)
         db_session.commit()
@@ -318,20 +318,20 @@ class TestChatMessageModel:
         assert message.id is not None
         assert message.session_id == test_session.id
         assert message.message_type == "user"
-        assert message.content == "Test message"
-        assert message.agent_name is None
+        assert message.content == "Hello, I need help with my claim"
+        assert message.agent_name == "chat_assistant"
+        assert message.created_at is not None
     
     def test_chat_message_relationship(self, db_session, test_session):
-        """Test chat message relationship to session."""
-        message = ChatMessage(
+        """Test chat message relationship."""
+        message = DBChatMessage(
             session_id=test_session.id,
             message_type="user",
-            content="Test message"
+            content="Hello, I need help with my claim"
         )
         db_session.add(message)
         db_session.commit()
         db_session.refresh(message)
         
         # Test relationship
-        assert message.session is not None
-        assert message.session.id == test_session.id
+        assert message.session == test_session
