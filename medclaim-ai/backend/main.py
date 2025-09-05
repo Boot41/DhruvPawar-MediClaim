@@ -381,7 +381,7 @@ async def generate_synthetic_claim_form(
     """Generate a synthetic claim form similar to popular vendor forms."""
     try:
         result = await agent_service.generate_synthetic_claim_form(
-            request.session_id, db, request.template_url
+            request.session_id, db, request.template_url, request.document_ids
         )
         
         if result.get("success"):
@@ -407,7 +407,7 @@ async def generate_vendor_claim_form(
     """Generate claim form using a specific vendor template."""
     try:
         result = await agent_service.generate_vendor_claim_form(
-            request.session_id, request.vendor_id, db
+            request.session_id, request.vendor_id, db, request.document_ids
         )
         
         if result.get("success"):

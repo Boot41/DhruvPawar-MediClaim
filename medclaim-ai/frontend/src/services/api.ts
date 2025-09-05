@@ -184,6 +184,23 @@ export const claimAPI = {
     return response.data;
   },
 
+  generateSyntheticForm: async (sessionId: string, documentIds: string[] = []) => {
+    const response = await api.post('/api/claims/generate-synthetic', {
+      session_id: sessionId,
+      document_ids: documentIds,
+    });
+    return response.data;
+  },
+
+  generateVendorForm: async (sessionId: string, vendorId: string, documentIds: string[] = []) => {
+    const response = await api.post('/api/claims/generate-vendor', {
+      session_id: sessionId,
+      vendor_id: vendorId,
+      document_ids: documentIds,
+    });
+    return response.data;
+  },
+
   submit: async (claimId: string, approvedData: any) => {
     const response = await api.post('/api/claims/submit', {
       claim_id: claimId,

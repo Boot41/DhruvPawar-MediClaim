@@ -97,11 +97,13 @@ class ClaimFilingRequest(BaseModel):
 
 class SyntheticFormRequest(BaseModel):
     session_id: str
+    document_ids: Optional[List[str]] = None  # Selected document IDs
     template_url: Optional[str] = None  # Reference URL for form structure
 
 class VendorFormRequest(BaseModel):
     session_id: str
     vendor_id: str
+    document_ids: Optional[List[str]] = None  # Selected document IDs
 
 # =============== VENDOR SCHEMAS ===============
 

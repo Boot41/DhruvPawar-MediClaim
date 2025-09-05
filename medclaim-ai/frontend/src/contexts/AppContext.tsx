@@ -76,10 +76,36 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   // Initialize session when user logs in
   useEffect(() => {
     if (token && !sessionId) {
+      createSession();
+    }
+  }, [token, sessionId]);
+
+  const createSession = async () => {
+    try {
+      const response = await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setSessionId(data.session_id);
+      } else {
+        console.error('Failed to create session');
+        // Fallback to local session ID
+        const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        setSessionId(newSessionId);
+      }
+    } catch (error) {
+      console.error('Error creating session:', error);
+      // Fallback to local session ID
       const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       setSessionId(newSessionId);
     }
-  }, [token, sessionId]);
+  };
 
   // Helper functions
   const addDocument = (doc: Document) => {

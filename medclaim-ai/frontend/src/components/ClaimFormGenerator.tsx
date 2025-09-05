@@ -3,7 +3,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
-import { claimAPI, vendorAPI } from '../services/api';
+import { claimAPI, vendorAPI, documentAPI } from '../services/api';
 import { FileText, Download, CheckCircle, AlertCircle, Loader, Edit3 } from 'lucide-react';
 
 const ClaimFormGenerator: React.FC = () => {
@@ -16,23 +16,40 @@ const ClaimFormGenerator: React.FC = () => {
   const [selectedVendor, setSelectedVendor] = useState<string | null>(null);
   const [formType, setFormType] = useState<'synthetic' | 'vendor'>('synthetic');
   const [showVendorSelection, setShowVendorSelection] = useState(false);
+  const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
+  const [selectedDocuments, setSelectedDocuments] = useState<string[]>([]);
+  const [loadingDocuments, setLoadingDocuments] = useState(false);
 
-  // Load vendors on component mount
+  // Load vendors and recent documents on component mount
   useEffect(() => {
-    const loadVendors = async () => {
+    const loadData = async () => {
       try {
+        // Load vendors
         const vendorList = await vendorAPI.getVendors();
         setVendors(vendorList);
+        
+        // Load recent documents
+        const docsSummary = await documentAPI.getDocumentsSummary();
+        if (docsSummary.recent_documents) {
+          setRecentDocuments(docsSummary.recent_documents);
+          // Auto-select all documents by default
+          setSelectedDocuments(docsSummary.recent_documents.map((doc: any) => doc.id));
+        }
       } catch (err) {
-        console.error('Failed to load vendors:', err);
+        console.error('Failed to load data:', err);
       }
     };
-    loadVendors();
+    loadData();
   }, []);
 
-  const generateForm = async () => {
+  const generateSyntheticForm = async () => {
     if (!sessionId) {
       setError('No active session');
+      return;
+    }
+
+    if (selectedDocuments.length === 0) {
+      setError('Please select at least one document to generate the form');
       return;
     }
 
@@ -40,15 +57,57 @@ const ClaimFormGenerator: React.FC = () => {
     setError(null);
 
     try {
-      const preview = await claimAPI.generateForm(sessionId);
-      setClaimFormPreview(preview);
-      setFormData(preview.form_data);
+      const result = await claimAPI.generateSyntheticForm(sessionId, selectedDocuments);
+      setClaimFormPreview(result);
+      setFormData(result.form_data);
     } catch (err: any) {
-      console.error('Form generation error:', err);
-      setError(err.response?.data?.detail || 'Failed to generate claim form');
+      console.error('Synthetic form generation error:', err);
+      setError(err.response?.data?.detail || 'Failed to generate synthetic form');
     } finally {
       setLoading(false);
     }
+  };
+
+  const generateVendorForm = async (vendorId: string) => {
+    if (!sessionId) {
+      setError('No active session');
+      return;
+    }
+
+    if (selectedDocuments.length === 0) {
+      setError('Please select at least one document to generate the form');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await claimAPI.generateVendorForm(sessionId, vendorId, selectedDocuments);
+      setClaimFormPreview(result);
+      setFormData(result.form_data);
+    } catch (err: any) {
+      console.error('Vendor form generation error:', err);
+      setError(err.response?.data?.detail || 'Failed to generate vendor form');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDocumentToggle = (documentId: string) => {
+    setSelectedDocuments(prev => 
+      prev.includes(documentId) 
+        ? prev.filter(id => id !== documentId)
+        : [...prev, documentId]
+    );
+  };
+
+  const selectAllDocuments = () => {
+    setSelectedDocuments(recentDocuments.map(doc => doc.id));
+  };
+
+  const deselectAllDocuments = () => {
+    setSelectedDocuments([]);
   };
 
   const handleFieldChange = (field: string, value: string) => {
@@ -89,7 +148,7 @@ const ClaimFormGenerator: React.FC = () => {
           <h3 className="text-lg font-medium text-secondary-900 mb-2">Generation Error</h3>
           <p className="text-secondary-600 mb-4">{error}</p>
           <button
-            onClick={generateForm}
+            onClick={generateSyntheticForm}
             className="btn-primary"
           >
             Try Again
@@ -109,20 +168,160 @@ const ClaimFormGenerator: React.FC = () => {
           </p>
         </div>
 
+        {/* Document Selection */}
+        {recentDocuments.length > 0 && (
+          <div className="card mb-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-secondary-900">Select Documents to Include</h3>
+              <div className="flex space-x-2">
+                <button
+                  onClick={selectAllDocuments}
+                  className="text-sm text-primary-600 hover:text-primary-700"
+                >
+                  Select All
+                </button>
+                <span className="text-secondary-400">|</span>
+                <button
+                  onClick={deselectAllDocuments}
+                  className="text-sm text-secondary-600 hover:text-secondary-700"
+                >
+                  Deselect All
+                </button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recentDocuments.map((doc) => (
+                <div
+                  key={doc.id}
+                  className={`border rounded-lg p-4 cursor-pointer transition-all ${
+                    selectedDocuments.includes(doc.id)
+                      ? 'border-primary-500 bg-primary-50'
+                      : 'border-secondary-200 hover:border-primary-300'
+                  }`}
+                  onClick={() => handleDocumentToggle(doc.id)}
+                >
+                  <div className="flex items-start space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedDocuments.includes(doc.id)}
+                      onChange={() => handleDocumentToggle(doc.id)}
+                      className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-secondary-300 rounded"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2">
+                        <FileText className="w-4 h-4 text-primary-600" />
+                        <p className="text-sm font-medium text-secondary-900 truncate">
+                          {doc.original_filename || doc.filename}
+                        </p>
+                      </div>
+                      <p className="text-xs text-secondary-600 capitalize mt-1">
+                        {doc.file_type.replace('_', ' ')}
+                      </p>
+                      <p className="text-xs text-secondary-500 mt-1">
+                        {new Date(doc.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-4 text-sm text-secondary-600">
+              {selectedDocuments.length} of {recentDocuments.length} documents selected
+            </div>
+          </div>
+        )}
 
-        <div className="text-center py-12">
-          <FileText className="w-12 h-12 text-primary-600 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-secondary-900 mb-2">Ready to Generate</h3>
-          <p className="text-secondary-600 mb-4">
-            Make sure you have uploaded your policy and invoice documents.
-          </p>
-          <button
-            onClick={generateForm}
-            className="btn-primary"
+        {/* Form Type Selection */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Synthetic Form Option */}
+          <div 
+            className={`border-2 rounded-lg p-6 cursor-pointer transition-all ${
+              formType === 'synthetic' 
+                ? 'border-primary-500 bg-primary-50' 
+                : 'border-secondary-200 hover:border-primary-300'
+            }`}
+            onClick={() => setFormType('synthetic')}
           >
-            Generate Claim Form
-          </button>
+            <div className="text-center">
+              <FileText className="w-12 h-12 text-primary-600 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-secondary-900 mb-2">Synthetic Form</h3>
+              <p className="text-secondary-600 mb-4">
+                Generate a custom claim form based on your documents
+              </p>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  generateSyntheticForm();
+                }}
+                className="btn-primary w-full"
+                disabled={loading}
+              >
+                {loading ? 'Generating...' : 'Generate Synthetic Form'}
+              </button>
+            </div>
+          </div>
+
+          {/* Vendor Form Option */}
+          <div 
+            className={`border-2 rounded-lg p-6 cursor-pointer transition-all ${
+              formType === 'vendor' 
+                ? 'border-primary-500 bg-primary-50' 
+                : 'border-secondary-200 hover:border-primary-300'
+            }`}
+            onClick={() => setFormType('vendor')}
+          >
+            <div className="text-center">
+              <FileText className="w-12 h-12 text-primary-600 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-secondary-900 mb-2">Vendor Form</h3>
+              <p className="text-secondary-600 mb-4">
+                Use a predefined form from popular insurance vendors
+              </p>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowVendorSelection(true);
+                }}
+                className="btn-primary w-full"
+                disabled={loading}
+              >
+                {loading ? 'Loading...' : 'Select Vendor Form'}
+              </button>
+            </div>
+          </div>
         </div>
+
+        {/* Vendor Selection Modal */}
+        {showVendorSelection && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+              <h3 className="text-lg font-semibold text-secondary-900 mb-4">Select Vendor</h3>
+              <div className="space-y-2">
+                {vendors.map((vendor) => (
+                  <button
+                    key={vendor.id}
+                    onClick={() => {
+                      setSelectedVendor(vendor.id);
+                      setShowVendorSelection(false);
+                      generateVendorForm(vendor.id);
+                    }}
+                    className="w-full text-left p-3 border border-secondary-200 rounded-lg hover:bg-secondary-50"
+                  >
+                    <div className="font-medium text-secondary-900">{vendor.display_name}</div>
+                    <div className="text-sm text-secondary-600">{vendor.name}</div>
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowVendorSelection(false)}
+                className="mt-4 w-full btn-secondary"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -183,6 +382,22 @@ const ClaimFormGenerator: React.FC = () => {
                 ))}
               </ul>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* PDF Preview */}
+      {claimFormPreview.pdf_filename && (
+        <div className="card">
+          <h3 className="text-lg font-semibold text-secondary-900 mb-4">PDF Preview</h3>
+          <div className="border border-secondary-200 rounded-lg overflow-hidden">
+            <iframe
+              src={`/api/claims/download-pdf/${claimFormPreview.pdf_filename}`}
+              width="100%"
+              height="600"
+              className="border-0"
+              title="PDF Preview"
+            />
           </div>
         </div>
       )}
@@ -350,7 +565,7 @@ const ClaimFormGenerator: React.FC = () => {
       {/* Action Buttons */}
       <div className="flex justify-between">
         <button
-          onClick={generateForm}
+          onClick={generateSyntheticForm}
           className="btn-secondary"
         >
           Regenerate Form

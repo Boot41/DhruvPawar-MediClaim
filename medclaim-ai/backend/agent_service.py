@@ -841,14 +841,19 @@ class AgentService:
                 "content": f"Agent error: {str(e)}"
             }
 
-    async def generate_synthetic_claim_form(self, session_id: str, db: Session, template_url: str = None) -> Dict[str, Any]:
+    async def generate_synthetic_claim_form(self, session_id: str, db: Session, template_url: str = None, document_ids: List[str] = None) -> Dict[str, Any]:
         """Generate a synthetic claim form similar to popular vendor forms."""
         try:
-            # Get session documents
-            documents = db.query(Document).filter(
+            # Get session documents (filter by selected document IDs if provided)
+            query = db.query(Document).filter(
                 Document.session_id == session_id,
                 Document.upload_status == "processed"
-            ).all()
+            )
+            
+            if document_ids:
+                query = query.filter(Document.id.in_(document_ids))
+            
+            documents = query.all()
             
             if not documents:
                 return {
@@ -952,7 +957,7 @@ class AgentService:
                 "error": str(e)
             }
 
-    async def generate_vendor_claim_form(self, session_id: str, vendor_id: str, db: Session) -> Dict[str, Any]:
+    async def generate_vendor_claim_form(self, session_id: str, vendor_id: str, db: Session, document_ids: List[str] = None) -> Dict[str, Any]:
         """Generate claim form using a specific vendor template."""
         try:
             # Get vendor information
@@ -963,11 +968,16 @@ class AgentService:
                     "error": "Vendor not found"
                 }
             
-            # Get session documents
-            documents = db.query(Document).filter(
+            # Get session documents (filter by selected document IDs if provided)
+            query = db.query(Document).filter(
                 Document.session_id == session_id,
                 Document.upload_status == "processed"
-            ).all()
+            )
+            
+            if document_ids:
+                query = query.filter(Document.id.in_(document_ids))
+            
+            documents = query.all()
             
             if not documents:
                 return {
