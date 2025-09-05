@@ -1,7 +1,7 @@
 /**
  * Document Upload Component
  */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useApp } from '../contexts/AppContext';
 import { documentAPI } from '../services/api';
@@ -12,6 +12,30 @@ const DocumentUpload: React.FC = () => {
   const [uploading, setUploading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
+  const [loadingDocuments, setLoadingDocuments] = useState(false);
+
+  // Load recent documents on component mount
+  useEffect(() => {
+    const loadRecentDocuments = async () => {
+      if (!sessionId) return;
+      
+      setLoadingDocuments(true);
+      try {
+        const response = await documentAPI.getDocumentsSummary();
+        console.log('Documents summary response:', response);
+        const documents = response.recent_documents || [];
+        console.log('Setting recent documents:', documents);
+        setRecentDocuments(documents);
+      } catch (error) {
+        console.error('Failed to load recent documents:', error);
+      } finally {
+        setLoadingDocuments(false);
+      }
+    };
+
+    loadRecentDocuments();
+  }, [sessionId]);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (!sessionId) {
@@ -32,8 +56,12 @@ const DocumentUpload: React.FC = () => {
           fileType = 'invoice';
         }
 
-        const response = await documentAPI.upload(file, fileType, sessionId);
-        addDocument(response);
+        const uploadResponse = await documentAPI.upload(file, fileType, sessionId);
+        addDocument(uploadResponse);
+        
+        // Refresh recent documents list
+        const summaryResponse = await documentAPI.getDocumentsSummary();
+        setRecentDocuments(summaryResponse.recent_documents || []);
         
         // Show success message
         setSuccess(`${file.name} uploaded successfully! Document is being processed.`);
@@ -69,6 +97,40 @@ const DocumentUpload: React.FC = () => {
           Our AI will analyze and extract key information for claim processing.
         </p>
       </div>
+
+      {/* Recently Uploaded Documents */}
+      {recentDocuments.length > 0 && (
+        <div className="card mb-6">
+          <h3 className="text-lg font-semibold text-secondary-900 mb-4">Recently Uploaded Documents</h3>
+          {loadingDocuments ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader className="w-6 h-6 text-primary-600 animate-spin" />
+              <span className="ml-2 text-secondary-600">Loading documents...</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recentDocuments.map((doc, index) => (
+                <div key={index} className="border border-secondary-200 rounded-lg p-4 bg-secondary-50">
+                  <div className="flex items-start space-x-3">
+                    <FileText className="w-5 h-5 text-primary-600 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-secondary-900 truncate">
+                        {doc.original_filename || doc.filename}
+                      </p>
+                      <p className="text-xs text-secondary-600 capitalize">
+                        {doc.file_type.replace('_', ' ')}
+                      </p>
+                      <p className="text-xs text-secondary-500">
+                        {new Date(doc.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Upload Area */}
       <div

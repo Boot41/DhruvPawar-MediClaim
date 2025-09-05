@@ -56,6 +56,7 @@ export interface AuthResponse {
 export interface Document {
   id: string;
   filename: string;
+  original_filename: string;
   file_type: string;
   upload_status: string;
   extracted_data?: any;

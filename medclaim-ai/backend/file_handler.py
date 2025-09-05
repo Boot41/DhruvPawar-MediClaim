@@ -111,7 +111,8 @@ class FileHandler:
             return {
                 "success": True,
                 "file_id": file_id,
-                "filename": filename,
+                "filename": filename,  # UUID filename for storage
+                "original_filename": file.filename,  # Human-readable filename
                 "file_path": str(file_path),
                 "file_size": validation["file_size"],
                 "file_extension": file_extension,

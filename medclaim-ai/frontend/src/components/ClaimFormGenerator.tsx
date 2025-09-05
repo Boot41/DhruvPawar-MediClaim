@@ -3,7 +3,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
-import { claimAPI, vendorAPI, documentAPI } from '../services/api';
+import { claimAPI, vendorAPI } from '../services/api';
 import { FileText, Download, CheckCircle, AlertCircle, Loader, Edit3 } from 'lucide-react';
 
 const ClaimFormGenerator: React.FC = () => {
@@ -16,26 +16,18 @@ const ClaimFormGenerator: React.FC = () => {
   const [selectedVendor, setSelectedVendor] = useState<string | null>(null);
   const [formType, setFormType] = useState<'synthetic' | 'vendor'>('synthetic');
   const [showVendorSelection, setShowVendorSelection] = useState(false);
-  const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
 
-  // Load vendors and recent documents on component mount
+  // Load vendors on component mount
   useEffect(() => {
-    const loadData = async () => {
+    const loadVendors = async () => {
       try {
-        // Load vendors
         const vendorList = await vendorAPI.getVendors();
         setVendors(vendorList);
-        
-        // Load recent documents
-        const docsSummary = await documentAPI.getDocumentsSummary();
-        if (docsSummary.has_documents) {
-          setRecentDocuments(docsSummary.recent_documents || []);
-        }
       } catch (err) {
-        console.error('Failed to load data:', err);
+        console.error('Failed to load vendors:', err);
       }
     };
-    loadData();
+    loadVendors();
   }, []);
 
   const generateForm = async () => {
@@ -117,32 +109,6 @@ const ClaimFormGenerator: React.FC = () => {
           </p>
         </div>
 
-        {/* Recently Uploaded Documents */}
-        {recentDocuments.length > 0 && (
-          <div className="card mb-6">
-            <h3 className="text-lg font-semibold text-secondary-900 mb-4">Recently Uploaded Documents</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {recentDocuments.map((doc, index) => (
-                <div key={index} className="border border-secondary-200 rounded-lg p-4 bg-secondary-50">
-                  <div className="flex items-start space-x-3">
-                    <FileText className="w-5 h-5 text-primary-600 mt-0.5" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-secondary-900 truncate">
-                        {doc.filename}
-                      </p>
-                      <p className="text-xs text-secondary-600 capitalize">
-                        {doc.file_type.replace('_', ' ')}
-                      </p>
-                      <p className="text-xs text-secondary-500">
-                        {new Date(doc.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="text-center py-12">
           <FileText className="w-12 h-12 text-primary-600 mx-auto mb-4" />

@@ -44,6 +44,7 @@ class DocumentChunk(BaseModel):
 class DocumentResponse(BaseModel):
     id: str
     filename: str
+    original_filename: str
     file_type: str
     upload_status: str
     extracted_data: Optional[Dict[str, Any]]

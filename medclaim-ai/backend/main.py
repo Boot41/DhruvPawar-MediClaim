@@ -135,6 +135,7 @@ async def upload_document(
             user_id=current_user.id,
             session_id=session_id,
             filename=file_result["filename"],
+            original_filename=file_result["original_filename"],
             file_path=file_result["file_path"],
             file_type=file_type,
             file_size=file_result["file_size"],
@@ -159,6 +160,7 @@ async def upload_document(
         return DocumentResponse(
             id=document.id,
             filename=document.filename,
+            original_filename=document.original_filename,
             file_type=document.file_type,
             upload_status=document.upload_status,
             extracted_data=document.extracted_data,
@@ -183,6 +185,7 @@ async def get_documents(
         DocumentResponse(
             id=doc.id,
             filename=doc.filename,
+            original_filename=doc.original_filename,
             file_type=doc.file_type,
             upload_status=doc.upload_status,
             extracted_data=doc.extracted_data,
@@ -216,7 +219,7 @@ async def get_documents_summary(
         # Extract key info for display
         display_info = {
             "id": str(doc.id),
-            "filename": doc.filename,
+            "filename": doc.original_filename,  # Use human-readable filename
             "file_type": doc.file_type,
             "created_at": doc.created_at.isoformat(),
             "extracted_data": doc.extracted_data
@@ -230,7 +233,7 @@ async def get_documents_summary(
         "recent_documents": [
             {
                 "id": str(doc.id),
-                "filename": doc.filename,
+                "filename": doc.original_filename,  # Use human-readable filename
                 "file_type": doc.file_type,
                 "created_at": doc.created_at.isoformat(),
                 "extracted_data": doc.extracted_data
