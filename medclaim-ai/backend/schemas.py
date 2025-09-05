@@ -82,10 +82,25 @@ class ClaimFormPreview(BaseModel):
     form_data: Dict[str, Any]
     preview_html: str
     missing_fields: List[str]
+    pdf_path: Optional[str] = None
+    pdf_filename: Optional[str] = None
 
 class ClaimSubmission(BaseModel):
     claim_id: str
     approved_data: Dict[str, Any]
+
+class ClaimFilingRequest(BaseModel):
+    session_id: str
+    vendor_id: Optional[str] = None  # If None, generate synthetic form
+    form_type: str = "synthetic"  # "vendor" or "synthetic"
+
+class SyntheticFormRequest(BaseModel):
+    session_id: str
+    template_url: Optional[str] = None  # Reference URL for form structure
+
+class VendorFormRequest(BaseModel):
+    session_id: str
+    vendor_id: str
 
 # =============== VENDOR SCHEMAS ===============
 

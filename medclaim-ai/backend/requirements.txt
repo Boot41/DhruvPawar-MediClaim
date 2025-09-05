@@ -45,3 +45,7 @@ google-auth>=2.40.0
 google-auth-oauthlib>=1.0.0
 google-auth-httplib2>=0.2.0
 google-api-python-client>=2.157.0
+
+# PDF generation
+reportlab>=4.0.4
+weasyprint>=60.2

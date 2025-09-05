@@ -87,6 +87,8 @@ export interface ClaimFormPreview {
   form_data: any;
   preview_html: string;
   missing_fields: string[];
+  pdf_path?: string;
+  pdf_filename?: string;
 }
 
 export interface Vendor {
@@ -148,6 +150,11 @@ export const documentAPI = {
     const response = await api.get('/api/documents');
     return response.data;
   },
+
+  getDocumentsSummary: async () => {
+    const response = await api.get('/api/documents/summary');
+    return response.data;
+  },
 };
 
 // Chat API
@@ -166,15 +173,6 @@ export const chatAPI = {
   },
 };
 
-// Coverage API
-export const coverageAPI = {
-  calculate: async (sessionId: string) => {
-    const response = await api.post('/api/coverage/calculate', {
-      session_id: sessionId,
-    });
-    return response.data;
-  },
-};
 
 // Claim API
 export const claimAPI = {

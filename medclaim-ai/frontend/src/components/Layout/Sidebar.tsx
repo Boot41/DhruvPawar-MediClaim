@@ -6,17 +6,14 @@ import { useApp } from '../../contexts/AppContext';
 import { 
   Upload, 
   MessageCircle, 
-  Calculator, 
   FileText, 
-  CheckCircle,
-  Circle
+  CheckCircle
 } from 'lucide-react';
 
 const steps = [
   { id: 'document_upload', label: 'Upload Documents', icon: Upload },
   { id: 'chat', label: 'Ask Questions', icon: MessageCircle },
-  { id: 'coverage', label: 'Coverage Analysis', icon: Calculator },
-  { id: 'claim_form', label: 'Generate Claim Form', icon: FileText },
+  { id: 'claim_form', label: 'File Claim', icon: FileText },
   { id: 'submit', label: 'Submit Claim', icon: CheckCircle },
 ];
 

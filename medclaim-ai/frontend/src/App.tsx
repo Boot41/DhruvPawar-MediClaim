@@ -9,7 +9,6 @@ import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
 import DocumentUpload from './components/DocumentUpload';
 import ChatInterface from './components/ChatInterface';
-import CoverageAnalysis from './components/CoverageAnalysis';
 import ClaimFormGenerator from './components/ClaimFormGenerator';
 import LoginForm from './components/Auth/LoginForm';
 import RegisterForm from './components/Auth/RegisterForm';
@@ -23,8 +22,6 @@ const MainApp: React.FC = () => {
         return <DocumentUpload />;
       case 'chat':
         return <ChatInterface />;
-      case 'coverage':
-        return <CoverageAnalysis />;
       case 'claim_form':
         return <ClaimFormGenerator />;
       case 'submit':

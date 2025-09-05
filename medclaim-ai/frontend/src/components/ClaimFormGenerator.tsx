@@ -3,15 +3,40 @@
  */
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
-import { claimAPI } from '../services/api';
+import { claimAPI, vendorAPI, documentAPI } from '../services/api';
 import { FileText, Download, CheckCircle, AlertCircle, Loader, Edit3 } from 'lucide-react';
 
 const ClaimFormGenerator: React.FC = () => {
-  const { sessionId, claimFormPreview, setClaimFormPreview, documents } = useApp();
+  const { sessionId, claimFormPreview, setClaimFormPreview } = useApp();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState<any>(null);
+  const [vendors, setVendors] = useState<any[]>([]);
+  const [selectedVendor, setSelectedVendor] = useState<string | null>(null);
+  const [formType, setFormType] = useState<'synthetic' | 'vendor'>('synthetic');
+  const [showVendorSelection, setShowVendorSelection] = useState(false);
+  const [recentDocuments, setRecentDocuments] = useState<any[]>([]);
+
+  // Load vendors and recent documents on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Load vendors
+        const vendorList = await vendorAPI.getVendors();
+        setVendors(vendorList);
+        
+        // Load recent documents
+        const docsSummary = await documentAPI.getDocumentsSummary();
+        if (docsSummary.has_documents) {
+          setRecentDocuments(docsSummary.recent_documents || []);
+        }
+      } catch (err) {
+        console.error('Failed to load data:', err);
+      }
+    };
+    loadData();
+  }, []);
 
   const generateForm = async () => {
     if (!sessionId) {
@@ -86,11 +111,38 @@ const ClaimFormGenerator: React.FC = () => {
     return (
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold text-secondary-900 mb-2">Generate Claim Form</h2>
+          <h2 className="text-2xl font-bold text-secondary-900 mb-2">File Your Claim</h2>
           <p className="text-secondary-600">
-            Create a personalized claim form based on your uploaded documents.
+            Choose how you'd like to file your claim - either with a popular vendor form or a synthetic form.
           </p>
         </div>
+
+        {/* Recently Uploaded Documents */}
+        {recentDocuments.length > 0 && (
+          <div className="card mb-6">
+            <h3 className="text-lg font-semibold text-secondary-900 mb-4">Recently Uploaded Documents</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recentDocuments.map((doc, index) => (
+                <div key={index} className="border border-secondary-200 rounded-lg p-4 bg-secondary-50">
+                  <div className="flex items-start space-x-3">
+                    <FileText className="w-5 h-5 text-primary-600 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-secondary-900 truncate">
+                        {doc.filename}
+                      </p>
+                      <p className="text-xs text-secondary-600 capitalize">
+                        {doc.file_type.replace('_', ' ')}
+                      </p>
+                      <p className="text-xs text-secondary-500">
+                        {new Date(doc.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="text-center py-12">
           <FileText className="w-12 h-12 text-primary-600 mx-auto mb-4" />
@@ -135,6 +187,17 @@ const ClaimFormGenerator: React.FC = () => {
             <Download className="w-4 h-4 mr-2" />
             Print
           </button>
+          
+          {claimFormPreview.pdf_filename && (
+            <a
+              href={`/api/claims/download-pdf/${claimFormPreview.pdf_filename}`}
+              download
+              className="btn-primary"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download PDF
+            </a>
+          )}
         </div>
       </div>
 

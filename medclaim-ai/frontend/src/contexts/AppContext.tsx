@@ -2,7 +2,7 @@
  * Main Application Context
  */
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Document, ChatResponse, CoverageAnalysis, ClaimFormPreview, WorkflowState } from '../services/api';
+import { Document, ChatResponse, ClaimFormPreview, WorkflowState } from '../services/api';
 import { useAuth } from './AuthContext';
 
 interface AppContextType {
@@ -20,9 +20,6 @@ interface AppContextType {
   setChatMessages: (messages: ChatResponse[]) => void;
   addChatMessage: (message: ChatResponse) => void;
   
-  // Coverage
-  coverageAnalysis: CoverageAnalysis | null;
-  setCoverageAnalysis: (analysis: CoverageAnalysis | null) => void;
   
   // Claims
   claimFormPreview: ClaimFormPreview | null;
@@ -65,8 +62,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   // Chat
   const [chatMessages, setChatMessages] = useState<ChatResponse[]>([]);
   
-  // Coverage
-  const [coverageAnalysis, setCoverageAnalysis] = useState<CoverageAnalysis | null>(null);
   
   // Claims
   const [claimFormPreview, setClaimFormPreview] = useState<ClaimFormPreview | null>(null);
@@ -104,8 +99,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     chatMessages,
     setChatMessages,
     addChatMessage,
-    coverageAnalysis,
-    setCoverageAnalysis,
     claimFormPreview,
     setClaimFormPreview,
     workflowState,

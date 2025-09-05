@@ -192,6 +192,53 @@ async def get_documents(
         for doc in documents
     ]
 
+@app.get("/api/documents/summary")
+async def get_documents_summary(
+    current_user: User = Depends(require_active_user),
+    db: Session = Depends(get_db)
+):
+    """Get a summary of user's documents for display on upload page."""
+    documents = db.query(Document).filter(
+        Document.user_id == current_user.id,
+        Document.upload_status == "processed"
+    ).order_by(Document.created_at.desc()).all()
+    
+    if not documents:
+        return {"has_documents": False, "documents": []}
+    
+    # Group documents by type
+    documents_by_type = {}
+    for doc in documents:
+        doc_type = doc.file_type
+        if doc_type not in documents_by_type:
+            documents_by_type[doc_type] = []
+        
+        # Extract key info for display
+        display_info = {
+            "id": str(doc.id),
+            "filename": doc.filename,
+            "file_type": doc.file_type,
+            "created_at": doc.created_at.isoformat(),
+            "extracted_data": doc.extracted_data
+        }
+        documents_by_type[doc_type].append(display_info)
+    
+    return {
+        "has_documents": True,
+        "total_documents": len(documents),
+        "documents_by_type": documents_by_type,
+        "recent_documents": [
+            {
+                "id": str(doc.id),
+                "filename": doc.filename,
+                "file_type": doc.file_type,
+                "created_at": doc.created_at.isoformat(),
+                "extracted_data": doc.extracted_data
+            }
+            for doc in documents[:5]  # Show last 5 documents
+        ]
+    }
+
 # =============== CHAT SYSTEM ===============
 
 @app.post("/api/chat", response_model=ChatResponse)
@@ -262,44 +309,111 @@ async def get_chat_history(
         for msg in messages
     ]
 
-# =============== COVERAGE ANALYSIS ===============
 
-@app.post("/api/coverage/calculate", response_model=CoverageAnalysis)
-async def calculate_coverage(
-    session_id: str,
+# =============== CLAIM FORM GENERATION ===============
+
+@app.post("/api/claims/generate-form", response_model=ClaimFormPreview)
+async def generate_claim_form(
+    request: ClaimInitiate,
     current_user: User = Depends(require_active_user),
     db: Session = Depends(get_db)
 ):
-    """Calculate insurance coverage based on uploaded documents."""
+    """Generate claim form based on uploaded documents."""
     try:
-        result = await agent_service.calculate_coverage(session_id, db)
+        result = await agent_service.generate_claim_form(request.session_id, db)
         
         if result.get("success"):
-            coverage_data = result["coverage_analysis"]
-            return CoverageAnalysis(**coverage_data)
+            return ClaimFormPreview(
+                form_data=result["form_data"],
+                preview_html=result["preview_html"],
+                missing_fields=result["missing_fields"],
+                pdf_path=result.get("pdf_path"),
+                pdf_filename=result.get("pdf_filename")
+            )
         else:
             raise HTTPException(status_code=500, detail=result.get("error"))
             
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# =============== CLAIM FORM GENERATION ===============
-
-@app.post("/api/claims/generate-form", response_model=ClaimFormPreview)
-async def generate_claim_form(
-    session_id: str,
+@app.post("/api/claims/file-claim", response_model=ClaimFormPreview)
+async def file_claim(
+    request: ClaimFilingRequest,
     current_user: User = Depends(require_active_user),
     db: Session = Depends(get_db)
 ):
-    """Generate claim form based on uploaded documents."""
+    """File a claim - either with a vendor form or synthetic form."""
     try:
-        result = await agent_service.generate_claim_form(session_id, db)
+        if request.form_type == "vendor" and request.vendor_id:
+            # Generate form using vendor template
+            result = await agent_service.generate_vendor_claim_form(
+                request.session_id, request.vendor_id, db
+            )
+        else:
+            # Generate synthetic form
+            result = await agent_service.generate_synthetic_claim_form(
+                request.session_id, db
+            )
         
         if result.get("success"):
             return ClaimFormPreview(
                 form_data=result["form_data"],
                 preview_html=result["preview_html"],
-                missing_fields=result["missing_fields"]
+                missing_fields=result["missing_fields"],
+                pdf_path=result.get("pdf_path"),
+                pdf_filename=result.get("pdf_filename")
+            )
+        else:
+            raise HTTPException(status_code=500, detail=result.get("error"))
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/claims/generate-synthetic", response_model=ClaimFormPreview)
+async def generate_synthetic_claim_form(
+    request: SyntheticFormRequest,
+    current_user: User = Depends(require_active_user),
+    db: Session = Depends(get_db)
+):
+    """Generate a synthetic claim form similar to popular vendor forms."""
+    try:
+        result = await agent_service.generate_synthetic_claim_form(
+            request.session_id, db, request.template_url
+        )
+        
+        if result.get("success"):
+            return ClaimFormPreview(
+                form_data=result["form_data"],
+                preview_html=result["preview_html"],
+                missing_fields=result["missing_fields"],
+                pdf_path=result.get("pdf_path"),
+                pdf_filename=result.get("pdf_filename")
+            )
+        else:
+            raise HTTPException(status_code=500, detail=result.get("error"))
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/claims/generate-vendor", response_model=ClaimFormPreview)
+async def generate_vendor_claim_form(
+    request: VendorFormRequest,
+    current_user: User = Depends(require_active_user),
+    db: Session = Depends(get_db)
+):
+    """Generate claim form using a specific vendor template."""
+    try:
+        result = await agent_service.generate_vendor_claim_form(
+            request.session_id, request.vendor_id, db
+        )
+        
+        if result.get("success"):
+            return ClaimFormPreview(
+                form_data=result["form_data"],
+                preview_html=result["preview_html"],
+                missing_fields=result["missing_fields"],
+                pdf_path=result.get("pdf_path"),
+                pdf_filename=result.get("pdf_filename")
             )
         else:
             raise HTTPException(status_code=500, detail=result.get("error"))
@@ -420,6 +534,29 @@ async def update_workflow_state(
         return SuccessResponse(
             success=True,
             message="Workflow state updated successfully"
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# =============== PDF DOWNLOAD ===============
+
+@app.get("/api/claims/download-pdf/{pdf_filename}")
+async def download_claim_pdf(
+    pdf_filename: str,
+    current_user: User = Depends(require_active_user)
+):
+    """Download generated claim form PDF."""
+    try:
+        pdf_path = os.path.join("uploads", "generated_forms", pdf_filename)
+        
+        if not os.path.exists(pdf_path):
+            raise HTTPException(status_code=404, detail="PDF file not found")
+        
+        return FileResponse(
+            path=pdf_path,
+            filename=pdf_filename,
+            media_type="application/pdf"
         )
         
     except Exception as e:

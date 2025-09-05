@@ -18,6 +18,7 @@ from agents import (
 )
 from document_processor import document_processor
 from database import Document, DocumentChunk, ChatMessage as DBChatMessage, Claim, WorkflowState, UserSession
+from pdf_generator import pdf_generator
 
 class AgentService:
     def __init__(self):
@@ -839,6 +840,387 @@ class AgentService:
                 "error": str(e),
                 "content": f"Agent error: {str(e)}"
             }
+
+    async def generate_synthetic_claim_form(self, session_id: str, db: Session, template_url: str = None) -> Dict[str, Any]:
+        """Generate a synthetic claim form similar to popular vendor forms."""
+        try:
+            # Get session documents
+            documents = db.query(Document).filter(
+                Document.session_id == session_id,
+                Document.upload_status == "processed"
+            ).all()
+            
+            if not documents:
+                return {
+                    "success": False,
+                    "error": "No processed documents found for this session"
+                }
+            
+            # Extract data from documents with better parsing
+            policy_data = {}
+            invoice_data = {}
+            
+            for doc in documents:
+                if doc.extracted_data:
+                    extracted = doc.extracted_data
+                    if isinstance(extracted, dict):
+                        if doc.file_type == "policy":
+                            policy_data.update(extracted)
+                        elif doc.file_type == "invoice":
+                            invoice_data.update(extracted)
+                        elif doc.file_type == "medical_record":
+                            # Medical records can contain both policy and invoice info
+                            if any(key in extracted for key in ["policy_number", "insurer_name", "coverage_amount"]):
+                                policy_data.update(extracted)
+                            if any(key in extracted for key in ["patient_name", "hospital_name", "total_amount", "service_date"]):
+                                invoice_data.update(extracted)
+            
+            # Create synthetic form data with better field mapping
+            def safe_get(data, *keys):
+                """Safely get value from dict with multiple possible keys"""
+                for key in keys:
+                    if key in data and data[key]:
+                        return data[key]
+                return ""
+            
+            synthetic_form_data = {
+                "claim_id": f"SYN_{session_id[:8]}",
+                "form_type": "synthetic",
+                "patient_name": safe_get(policy_data, "policy_holder_name", "patient_name", "name") or 
+                              safe_get(invoice_data, "patient_name", "name"),
+                "policy_number": safe_get(policy_data, "policy_number", "policy_no", "policy_id"),
+                "insurer_name": safe_get(policy_data, "insurance_company", "insurer_name", "company_name", "insurer"),
+                "coverage_amount": safe_get(policy_data, "sum_insured", "coverage_amount", "total_coverage", "sum_assured"),
+                "hospital_name": safe_get(invoice_data, "hospital_name", "facility_name", "hospital", "clinic_name"),
+                "service_date": safe_get(invoice_data, "service_date", "treatment_date", "date_of_service", "admission_date"),
+                "total_amount": safe_get(invoice_data, "total_amount", "bill_amount", "total_bill", "amount"),
+                "procedures": invoice_data.get("procedures", []) or invoice_data.get("treatments", []) or [],
+                "claim_reason": "Medical treatment",
+                "date_of_incident": safe_get(invoice_data, "service_date", "treatment_date", "date_of_service"),
+                "treatment_details": safe_get(invoice_data, "treatment_description", "diagnosis", "treatment", "description"),
+                "doctor_name": safe_get(invoice_data, "doctor_name", "physician_name", "doctor"),
+                "room_type": safe_get(invoice_data, "room_type", "accommodation_type"),
+                "admission_date": safe_get(invoice_data, "admission_date", "service_date"),
+                "discharge_date": safe_get(invoice_data, "discharge_date", "discharge_date"),
+                "diagnosis": safe_get(invoice_data, "diagnosis", "medical_condition", "condition"),
+                "pre_existing_condition": "No",
+                "previous_claims": "No",
+                "bank_details": {
+                    "account_holder_name": safe_get(policy_data, "policy_holder_name", "patient_name", "name") or 
+                                        safe_get(invoice_data, "patient_name", "name"),
+                    "account_number": "",
+                    "ifsc_code": "",
+                    "bank_name": ""
+                }
+            }
+            
+            # Generate HTML preview
+            preview_html = self._generate_synthetic_form_html(synthetic_form_data)
+            
+            # Generate PDF
+            pdf_filename = f"synthetic_claim_{session_id[:8]}.pdf"
+            pdf_path = os.path.join("uploads", "generated_forms", pdf_filename)
+            os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+            
+            try:
+                pdf_generator.generate_synthetic_claim_pdf(synthetic_form_data, pdf_path)
+                synthetic_form_data["pdf_path"] = pdf_path
+                synthetic_form_data["pdf_filename"] = pdf_filename
+            except Exception as e:
+                print(f"Error generating PDF: {e}")
+                synthetic_form_data["pdf_path"] = None
+                synthetic_form_data["pdf_filename"] = None
+            
+            # Identify missing fields
+            missing_fields = []
+            for key, value in synthetic_form_data.items():
+                if not value or (isinstance(value, str) and value.strip() == ""):
+                    missing_fields.append(key.replace("_", " ").title())
+            
+            return {
+                "success": True,
+                "form_data": synthetic_form_data,
+                "preview_html": preview_html,
+                "missing_fields": missing_fields,
+                "pdf_path": synthetic_form_data.get("pdf_path"),
+                "pdf_filename": synthetic_form_data.get("pdf_filename")
+            }
+            
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
+    async def generate_vendor_claim_form(self, session_id: str, vendor_id: str, db: Session) -> Dict[str, Any]:
+        """Generate claim form using a specific vendor template."""
+        try:
+            # Get vendor information
+            vendor = db.query(Vendor).filter(Vendor.id == vendor_id).first()
+            if not vendor:
+                return {
+                    "success": False,
+                    "error": "Vendor not found"
+                }
+            
+            # Get session documents
+            documents = db.query(Document).filter(
+                Document.session_id == session_id,
+                Document.upload_status == "processed"
+            ).all()
+            
+            if not documents:
+                return {
+                    "success": False,
+                    "error": "No processed documents found for this session"
+                }
+            
+            # Extract data from documents
+            policy_data = {}
+            invoice_data = {}
+            
+            for doc in documents:
+                if doc.file_type == "policy" and doc.extracted_data:
+                    policy_data.update(doc.extracted_data)
+                elif doc.file_type == "invoice" and doc.extracted_data:
+                    invoice_data.update(doc.extracted_data)
+            
+            # Create vendor-specific form data
+            vendor_form_data = {
+                "claim_id": f"{vendor.name.upper()}_{session_id[:8]}",
+                "form_type": "vendor",
+                "vendor_name": vendor.display_name,
+                "vendor_id": vendor_id,
+                "patient_name": policy_data.get("policy_holder_name", ""),
+                "policy_number": policy_data.get("policy_number", ""),
+                "insurer_name": policy_data.get("insurance_company", ""),
+                "coverage_amount": policy_data.get("sum_insured", ""),
+                "hospital_name": invoice_data.get("hospital_name", ""),
+                "service_date": invoice_data.get("service_date", ""),
+                "total_amount": invoice_data.get("total_amount", ""),
+                "procedures": invoice_data.get("procedures", []),
+                "claim_reason": "Medical treatment",
+                "date_of_incident": invoice_data.get("service_date", ""),
+                "treatment_details": invoice_data.get("treatment_description", ""),
+                "doctor_name": invoice_data.get("doctor_name", ""),
+                "room_type": invoice_data.get("room_type", ""),
+                "admission_date": invoice_data.get("admission_date", ""),
+                "discharge_date": invoice_data.get("discharge_date", ""),
+                "diagnosis": invoice_data.get("diagnosis", ""),
+                "pre_existing_condition": "No",
+                "previous_claims": "No",
+                "bank_details": {
+                    "account_holder_name": policy_data.get("policy_holder_name", ""),
+                    "account_number": "",
+                    "ifsc_code": "",
+                    "bank_name": ""
+                }
+            }
+            
+            # Generate HTML preview
+            preview_html = self._generate_vendor_form_html(vendor_form_data, vendor)
+            
+            # Generate PDF
+            pdf_filename = f"{vendor.name}_claim_{session_id[:8]}.pdf"
+            pdf_path = os.path.join("uploads", "generated_forms", pdf_filename)
+            os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+            
+            try:
+                if vendor.form_template_url and "d28c6jni2fmamz.cloudfront.net" in vendor.form_template_url:
+                    # Use template-based generation for Star Health
+                    pdf_generator.generate_pdf_from_template(vendor_form_data, vendor.form_template_url, pdf_path)
+                else:
+                    # Use standard vendor form generation
+                    pdf_generator.generate_vendor_claim_pdf(vendor_form_data, vendor.display_name, pdf_path)
+                
+                vendor_form_data["pdf_path"] = pdf_path
+                vendor_form_data["pdf_filename"] = pdf_filename
+            except Exception as e:
+                print(f"Error generating PDF: {e}")
+                vendor_form_data["pdf_path"] = None
+                vendor_form_data["pdf_filename"] = None
+            
+            # Identify missing fields
+            missing_fields = []
+            for key, value in vendor_form_data.items():
+                if not value or (isinstance(value, str) and value.strip() == ""):
+                    missing_fields.append(key.replace("_", " ").title())
+            
+            return {
+                "success": True,
+                "form_data": vendor_form_data,
+                "preview_html": preview_html,
+                "missing_fields": missing_fields,
+                "pdf_path": vendor_form_data.get("pdf_path"),
+                "pdf_filename": vendor_form_data.get("pdf_filename")
+            }
+            
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
+    def _generate_synthetic_form_html(self, form_data: Dict[str, Any]) -> str:
+        """Generate HTML preview for synthetic claim form."""
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Insurance Claim Form - Synthetic</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 20px; }}
+                .form-section {{ margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; }}
+                .form-title {{ font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333; }}
+                .field {{ margin-bottom: 10px; }}
+                .field-label {{ font-weight: bold; display: inline-block; width: 200px; }}
+                .field-value {{ display: inline-block; }}
+                .section-title {{ font-size: 16px; font-weight: bold; margin: 15px 0 10px 0; color: #555; border-bottom: 1px solid #ccc; }}
+            </style>
+        </head>
+        <body>
+            <div class="form-section">
+                <div class="form-title">MEDICAL INSURANCE CLAIM FORM</div>
+                <div class="field">
+                    <span class="field-label">Claim ID:</span>
+                    <span class="field-value">{form_data.get('claim_id', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Form Type:</span>
+                    <span class="field-value">Synthetic Form</span>
+                </div>
+            </div>
+            
+            <div class="section-title">PATIENT INFORMATION</div>
+            <div class="form-section">
+                <div class="field">
+                    <span class="field-label">Patient Name:</span>
+                    <span class="field-value">{form_data.get('patient_name', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Policy Number:</span>
+                    <span class="field-value">{form_data.get('policy_number', 'N/A')}</span>
+                </div>
+            </div>
+            
+            <div class="section-title">INSURANCE INFORMATION</div>
+            <div class="form-section">
+                <div class="field">
+                    <span class="field-label">Insurance Company:</span>
+                    <span class="field-value">{form_data.get('insurer_name', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Coverage Amount:</span>
+                    <span class="field-value">₹{form_data.get('coverage_amount', 'N/A')}</span>
+                </div>
+            </div>
+            
+            <div class="section-title">MEDICAL INFORMATION</div>
+            <div class="form-section">
+                <div class="field">
+                    <span class="field-label">Hospital/Facility:</span>
+                    <span class="field-value">{form_data.get('hospital_name', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Service Date:</span>
+                    <span class="field-value">{form_data.get('service_date', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Total Amount:</span>
+                    <span class="field-value">₹{form_data.get('total_amount', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Doctor Name:</span>
+                    <span class="field-value">{form_data.get('doctor_name', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Diagnosis:</span>
+                    <span class="field-value">{form_data.get('diagnosis', 'N/A')}</span>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        return html
+
+    def _generate_vendor_form_html(self, form_data: Dict[str, Any], vendor) -> str:
+        """Generate HTML preview for vendor-specific claim form."""
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Insurance Claim Form - {vendor.display_name}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 20px; }}
+                .form-section {{ margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; }}
+                .form-title {{ font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333; }}
+                .field {{ margin-bottom: 10px; }}
+                .field-label {{ font-weight: bold; display: inline-block; width: 200px; }}
+                .field-value {{ display: inline-block; }}
+                .section-title {{ font-size: 16px; font-weight: bold; margin: 15px 0 10px 0; color: #555; border-bottom: 1px solid #ccc; }}
+                .vendor-header {{ background-color: #f0f0f0; padding: 10px; margin-bottom: 20px; }}
+            </style>
+        </head>
+        <body>
+            <div class="vendor-header">
+                <div class="form-title">{vendor.display_name} - MEDICAL INSURANCE CLAIM FORM</div>
+                <div class="field">
+                    <span class="field-label">Claim ID:</span>
+                    <span class="field-value">{form_data.get('claim_id', 'N/A')}</span>
+                </div>
+            </div>
+            
+            <div class="section-title">PATIENT INFORMATION</div>
+            <div class="form-section">
+                <div class="field">
+                    <span class="field-label">Patient Name:</span>
+                    <span class="field-value">{form_data.get('patient_name', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Policy Number:</span>
+                    <span class="field-value">{form_data.get('policy_number', 'N/A')}</span>
+                </div>
+            </div>
+            
+            <div class="section-title">INSURANCE INFORMATION</div>
+            <div class="form-section">
+                <div class="field">
+                    <span class="field-label">Insurance Company:</span>
+                    <span class="field-value">{form_data.get('insurer_name', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Coverage Amount:</span>
+                    <span class="field-value">₹{form_data.get('coverage_amount', 'N/A')}</span>
+                </div>
+            </div>
+            
+            <div class="section-title">MEDICAL INFORMATION</div>
+            <div class="form-section">
+                <div class="field">
+                    <span class="field-label">Hospital/Facility:</span>
+                    <span class="field-value">{form_data.get('hospital_name', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Service Date:</span>
+                    <span class="field-value">{form_data.get('service_date', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Total Amount:</span>
+                    <span class="field-value">₹{form_data.get('total_amount', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Doctor Name:</span>
+                    <span class="field-value">{form_data.get('doctor_name', 'N/A')}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Diagnosis:</span>
+                    <span class="field-value">{form_data.get('diagnosis', 'N/A')}</span>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        return html
 
 # Global agent service instance
 agent_service = AgentService()
