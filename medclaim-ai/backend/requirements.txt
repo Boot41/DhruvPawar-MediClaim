@@ -49,3 +49,5 @@ google-api-python-client>=2.157.0
 # PDF generation
 reportlab>=4.0.4
 weasyprint>=60.2
+PyPDF2>=3.0.1
+Pillow>=10.0.0

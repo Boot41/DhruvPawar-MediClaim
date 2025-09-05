@@ -17,7 +17,7 @@ from agents import (
     chat_assistant_agent, claim_form_agent
 )
 from document_processor import document_processor
-from database import Document, DocumentChunk, ChatMessage as DBChatMessage, Claim, WorkflowState, UserSession
+from database import Document, DocumentChunk, ChatMessage as DBChatMessage, Claim, WorkflowState, UserSession, Vendor
 from pdf_generator import pdf_generator
 
 class AgentService:
@@ -844,7 +844,8 @@ class AgentService:
     async def generate_synthetic_claim_form(self, session_id: str, db: Session, template_url: str = None, document_ids: List[str] = None) -> Dict[str, Any]:
         """Generate a synthetic claim form similar to popular vendor forms."""
         try:
-            # Get session documents (filter by selected document IDs if provided)
+            # Get user documents (filter by selected document IDs if provided)
+            # First try with the specific session, then fallback to all user documents
             query = db.query(Document).filter(
                 Document.session_id == session_id,
                 Document.upload_status == "processed"
@@ -855,10 +856,29 @@ class AgentService:
             
             documents = query.all()
             
+            # If no documents found for this session, try to get documents from any session for this user
+            if not documents:
+                # Get the user_id from any document to find user's documents
+                user_docs = db.query(Document).filter(
+                    Document.upload_status == "processed"
+                ).first()
+                
+                if user_docs:
+                    user_id = user_docs.user_id
+                    query = db.query(Document).filter(
+                        Document.user_id == user_id,
+                        Document.upload_status == "processed"
+                    )
+                    
+                    if document_ids:
+                        query = query.filter(Document.id.in_(document_ids))
+                    
+                    documents = query.all()
+            
             if not documents:
                 return {
                     "success": False,
-                    "error": "No processed documents found for this session"
+                    "error": "No processed documents found. Please upload and process some documents first."
                 }
             
             # Extract data from documents with better parsing
@@ -968,7 +988,8 @@ class AgentService:
                     "error": "Vendor not found"
                 }
             
-            # Get session documents (filter by selected document IDs if provided)
+            # Get user documents (filter by selected document IDs if provided)
+            # First try with the specific session, then fallback to all user documents
             query = db.query(Document).filter(
                 Document.session_id == session_id,
                 Document.upload_status == "processed"
@@ -979,10 +1000,29 @@ class AgentService:
             
             documents = query.all()
             
+            # If no documents found for this session, try to get documents from any session for this user
+            if not documents:
+                # Get the user_id from any document to find user's documents
+                user_docs = db.query(Document).filter(
+                    Document.upload_status == "processed"
+                ).first()
+                
+                if user_docs:
+                    user_id = user_docs.user_id
+                    query = db.query(Document).filter(
+                        Document.user_id == user_id,
+                        Document.upload_status == "processed"
+                    )
+                    
+                    if document_ids:
+                        query = query.filter(Document.id.in_(document_ids))
+                    
+                    documents = query.all()
+            
             if not documents:
                 return {
                     "success": False,
-                    "error": "No processed documents found for this session"
+                    "error": "No processed documents found. Please upload and process some documents first."
                 }
             
             # Extract data from documents

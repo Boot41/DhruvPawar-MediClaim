@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { claimAPI, vendorAPI, documentAPI } from '../services/api';
 import { FileText, Download, CheckCircle, AlertCircle, Loader, Edit3 } from 'lucide-react';
+import PDFViewer from './PDFViewer';
 
 const ClaimFormGenerator: React.FC = () => {
   const { sessionId, claimFormPreview, setClaimFormPreview } = useApp();
@@ -355,7 +356,7 @@ const ClaimFormGenerator: React.FC = () => {
           
           {claimFormPreview.pdf_filename && (
             <a
-              href={`/api/claims/download-pdf/${claimFormPreview.pdf_filename}`}
+              href={`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/claims/download-pdf/${claimFormPreview.pdf_filename}`}
               download
               className="btn-primary"
             >
@@ -389,16 +390,24 @@ const ClaimFormGenerator: React.FC = () => {
       {/* PDF Preview */}
       {claimFormPreview.pdf_filename && (
         <div className="card">
-          <h3 className="text-lg font-semibold text-secondary-900 mb-4">PDF Preview</h3>
-          <div className="border border-secondary-200 rounded-lg overflow-hidden">
-            <iframe
-              src={`/api/claims/download-pdf/${claimFormPreview.pdf_filename}`}
-              width="100%"
-              height="600"
-              className="border-0"
-              title="PDF Preview"
-            />
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-secondary-900">PDF Preview</h3>
+            <div className="flex space-x-2">
+              <a
+                href={`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/claims/download-pdf/${claimFormPreview.pdf_filename}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary text-sm"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Open in New Tab
+              </a>
+            </div>
           </div>
+          <PDFViewer
+            pdfUrl={`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/claims/download-pdf/${claimFormPreview.pdf_filename}`}
+            filename={claimFormPreview.pdf_filename}
+          />
         </div>
       )}
 

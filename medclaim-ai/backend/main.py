@@ -556,11 +556,17 @@ async def download_claim_pdf(
         if not os.path.exists(pdf_path):
             raise HTTPException(status_code=404, detail="PDF file not found")
         
-        return FileResponse(
+        response = FileResponse(
             path=pdf_path,
             filename=pdf_filename,
             media_type="application/pdf"
         )
+        
+        # Add headers to allow iframe embedding
+        response.headers["Content-Disposition"] = f"inline; filename={pdf_filename}"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        
+        return response
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
