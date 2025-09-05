@@ -56,5 +56,271 @@
     "total_chunks": 1,
     "parser": "basic",
     "images": []
+  },
+  "51f3ceed-00a1-4c": {
+    "success": false,
+    "error": "No text could be extracted from the document"
+  },
+  "d919ed327a414061": {
+    "success": true,
+    "document_id": "0af9d1cf-8231-4a6f-9332-4038a7938b26",
+    "document_type": "invoice",
+    "text": "Springfield General Hospital\nComprehensive Medical Invoice\nInvoice #: SGH\u0000INV\u00002025\u00000915\u00002147\nBilling Department: \u000091\u000080\u00004012\u00002345\nHospital Address: 12 MG Road, Bengaluru 560001, Karnataka\nInvoice Date: September 15, 2025\nPatient Information & Admission Details\nPatient: Aarav Mehta \u0000ID\u0000 PT\u000000991\u0000\nAge: 33 years | Gender: Male\nPolicy Number: POL\u0000IN\u0000987654\nEmergency Contact: Riya Mehta \u0000\u000091\u000098\u00007654\u00003211\u0000\nPrimary Admission:\nAdmitted: September 10, 2025 08\u000030 AM\nDischarged: September 15, 2025 02\u000015 PM\nLength of Stay: 5 days, 6 hours\nSecondary Readmission:\nReadmitted: September 16, 2025 11\u000045 PM \u0000Emergency)\nDischarged: September 18, 2025 09\u000000 AM\nLength of Stay: 1 day, 9 hours\nPrimary Diagnosis: Severe Pneumonia with Respiratory Failure \u0000J44.0\u0000\nSecondary Diagnosis: Acute Kidney Injury \u0000N17.9\u0000, Septic Shock \u0000R65.21\u0000\nAttending Physician: Dr. Priya Sharma, MD \u0000Pulmonology)\nConsulting Physicians: Dr. Rajesh Kumar, MD \u0000Nephrology), Dr. Anita Singh, MD \u0000Critical Care)\nDetailed Medical Services & Charges\nEmergency Department Services\nCode Description Qty Unit Rate (₹) Line Total (₹)\n99291 Critical Care - First Hour 1 12,500.00 12,500.00\n99292 Critical Care - Additional 30min blocks 8 6,250.00 50,000.00\n36620 Arterial Puncture for Blood Gas 6 850.00 5,100.00\nCode Description Qty Unit Rate (₹) Line Total (₹)\n71020 Chest X\u0000Ray \u00002 views) 4 1,800.00 7,200.00\nLaboratory Services - Comprehensive Panel\nCode Description Qty Unit Rate (₹) Line Total (₹)\n80053 Comprehensive Metabolic Panel 8 2,200.00 17,600.00\n85025 Complete Blood Count with Differential 12 950.00 11,400.00\n85610 Prothrombin Time \u0000PT/INR\u0000 6 650.00 3,900.00\n85730 Partial Thromboplastin Time \u0000PTT\u0000 6 750.00 4,500.00\n82565 Creatinine, Blood 10 400.00 4,000.00\n84550 Uric Acid 4 350.00 1,400.00\n82947 Glucose, Blood 15 150.00 2,250.00\n84295 Sodium, Blood 8 300.00 2,400.00\n84132 Potassium, Blood 8 300.00 2,400.00\n82435 Chloride, Blood 8 300.00 2,400.00\nAdvanced Diagnostic Imaging\nCode Description Qty Unit Rate (₹) Line Total (₹)\n71260 CT Chest with Contrast 2 15,500.00 31,000.00\n74177 CT Abdomen/Pelvis with Contrast 1 18,750.00 18,750.00\n93306 Echocardiogram Complete 2 8,500.00 17,000.00\n76700 Abdominal Ultrasound Complete 1 4,200.00 4,200.00\n71045 Chest X\u0000Ray Single View 6 900.00 5,400.00\nRespiratory Care & Ventilation\nCode Description Qty Unit Rate (₹) Line Total (₹)\n94660 Continuous Positive Airway Pressure 72 hours 450.00/hr 32,400.00\n31500 Emergency Intubation 1 8,500.00 8,500.00\n94002 Ventilation Management per day 4 12,000.00 48,000.00\n94664 Aerosol/Vapor Inhalation Treatment 24 650.00 15,600.00\nIntensive Care Unit Services\nCode Description Days Unit Rate (₹) Line Total (₹)\nICU\u0000SEMPR ICU Semi-Private Room 3 18,500.00 55,500.00\nICU\u0000PVT ICU Private Room 2 25,000.00 50,000.00\n99232 Hospital Visit - Intermediate 6 3,500.00 21,000.00\nRegular Ward Accommodation\nCode Description Days Unit Rate (₹) Line Total (₹)\nRM\u0000PVT Private Room with Attendant 2 8,500.00 17,000.00\nSurgical & Procedural Interventions\nCode Description Qty Unit Rate (₹) Line Total (₹)\n32554 Thoracentesis with Imaging 2 15,500.00 31,000.00\n36556 Central Venous Catheter Insertion 1 12,500.00 12,500.00\n43235 Upper GI Endoscopy Diagnostic 1 18,500.00 18,500.00\nNursing & Ancillary Care\nCode Description Days/Qty Unit Rate (₹) Line Total (₹)\nNSG\u0000ICU ICU Nursing Care \u000024/7\u0000 5 8,500.00 42,500.00\nNSG\u0000WARD General Ward Nursing 2 3,200.00 6,400.00\n99374 Care Plan Oversight - Complex 7 2,500.00 17,500.00\nPharmacy & Medical Supplies\nCode Description Qty Unit Rate (₹) Line Total (₹)\nMED\u0000ANTIBX Injectable Antibiotics \u0000Meropenem) 15 vials 2,850.00 42,750.00\nMED\u0000STEROID Methylprednisolone 500mg 10 vials 750.00 7,500.00\nMED\u0000BRONCHO Bronchodilator Medications 12 units 450.00 5,400.00\nMED\u0000ANALG Pain Management Medications 1 8,500.00 8,500.00\nSUP\u0000RESPIR Respiratory Support Supplies 1 15,750.00 15,750.00\nSUP\u0000IV IV Fluids & Administration Sets 25 units 350.00 8,750.00\nSUP\u0000SURGICAL Surgical Supplies & Disposables 1 12,400.00 12,400.00\nConsultation Fees\nCode Description Qty Unit Rate (₹) Line Total (₹)\nCONS\u0000PULM Pulmonology Consultation 4 4,500.00 18,000.00\nCONS\u0000NEPH Nephrology Consultation 3 4,800.00 14,400.00\nCONS\u0000CRIT Critical Care Consultation 5 5,500.00 27,500.00\nCONS\u0000CARD Cardiology Consultation 2 4,200.00 8,400.00\nMiscellaneous Charges\nCode Description Qty Unit Rate (₹) Line Total (₹)\nADM\u0000PROC Hospital Administration 1 3,500.00 3,500.00\nBIO\u0000WASTE Bio-Medical Waste Disposal 1 2,150.00 2,150.00\nDOC\u0000PROC Medical Record Processing 1 1,250.00 1,250.00\nFinancial Summary\nSubtotal: ₹847,300.00\nHospital Discount \u00005%\u0000\u0000 -₹42,365.00\nRevised Subtotal: ₹804,935.00\nGST \u0000 5%\u0000 ₹40,246.75\nGrand Total: ₹845,181.75\nInsurance & Payment Information\nPrimary Insurance: CareShield Health Insurance Co.\nPolicy Number: POL\u0000IN\u0000987654\nPre-Authorization Number: AUTH\u0000CS\u00002025\u0000091015\nCashless Limit Applied: ₹650,000.00\nPatient Responsibility:\nDeductible: ₹10,000.00\nCo-pay \u000010%\u0000\u0000 ₹83,518.18\nTotal Patient Payment: ₹93,518.18\nInsurance Coverage: ₹751,663.57\nMedical Notes & Documentation\nAdmission Summary:\nPatient presented with severe dyspnea, high fever \u000039.8°C\u0000, and productive cough of 4-day\nduration. Clinical examination revealed bilateral lung consolidation with respiratory distress. Initial\nchest X-ray showed extensive bilateral pneumonia with pleural effusion.\nTreatment Course:\nImmediate intubation and mechanical ventilation were required due to respiratory failure. Patient\nreceived broad-spectrum antibiotics \u0000Meropenem), corticosteroids, and supportive care in ICU.\nThoracentesis performed twice for pleural fluid drainage. Gradual improvement noted after 72\nhours of intensive treatment.\nDischarge Condition:\nPatient stable, breathing independently, vital signs within normal limits. Prescribed oral\nantibiotics and bronchodilators for home care. Follow-up scheduled in 7 days with pulmonology.\nDischarge Instructions:\n\u0000\u0000\u0000Complete antibiotic course as prescribed\n\u0000\u0000\u0000Use bronchodilator as needed for breathing support\n\u0000\u0000\u0000Monitor temperature and oxygen saturation daily\n\u0000\u0000\u0000Return immediately if breathing difficulty recurs\n\u0000\u0000\u0000Avoid exposure to respiratory irritants\nAuthorization: Dr. Priya Sharma, MD\nDate: September 15, 2025\nDigital Signature: \u0000Verified]\n",
+    "chunks": [
+      {
+        "chunk_index": 0,
+        "content": "Springfield General Hospital\nComprehensive Medical Invoice\nInvoice #: SGH\u0000INV\u00002025\u00000915\u00002147\nBilling Department: \u000091\u000080\u00004012\u00002345\nHospital Address: 12 MG Road, Bengaluru 560001, Karnataka\nInvoice Date: September 15, 2025\nPatient Information & Admission Details\nPatient: Aarav Mehta \u0000ID\u0000 PT\u000000991\u0000\nAge: 33 years | Gender: Male\nPolicy Number: POL\u0000IN\u0000987654\nEmergency Contact: Riya Mehta \u0000\u000091\u000098\u00007654\u00003211\u0000\nPrimary Admission:\nAdmitted: September 10, 2025 08\u000030 AM\nDischarged: September 15, 2025 02\u000015 PM\nLength of Stay: 5 days, 6 hours\nSecondary Readmission:\nReadmitted: September 16, 2025 11\u000045 PM \u0000Emergency)\nDischarged: September 18, 2025 09\u000000 AM\nLength of Stay: 1 day, 9 hours\nPrimary Diagnosis: Severe Pneumonia with Respiratory Failure \u0000J44.0\u0000\nSecondary Diagnosis: Acute Kidney Injury \u0000N17.9\u0000, Septic Shock \u0000R65.21\u0000\nAttending Physician: Dr. Priya Sharma, MD \u0000Pulmonology)\nConsulting Physicians: Dr. Rajesh Kumar, MD \u0000Nephrology), Dr. Anita Singh, MD \u0000Critical Care)",
+        "metadata": {
+          "document_type": "invoice",
+          "total_characters": 6212,
+          "processing_timestamp": "2025-09-05T11:02:31.948148",
+          "chunk_size": 969,
+          "created_at": "2025-09-05T11:02:31.948479",
+          "chunk_type": "patient_info"
+        }
+      },
+      {
+        "chunk_index": 1,
+        "content": "Attending Physician: Dr. Priya Sharma, MD \u0000Pulmonology)\nConsulting Physicians: Dr. Rajesh Kumar, MD \u0000Nephrology), Dr. Anita Singh, MD \u0000Critical Care)\nDetailed Medical Services & Charges\nEmergency Department Services\nCode Description Qty Unit Rate (₹) Line Total (₹)\n99291 Critical Care - First Hour 1 12,500.00 12,500.00\n99292 Critical Care - Additional 30min blocks 8 6,250.00 50,000.00\n36620 Arterial Puncture for Blood Gas 6 850.00 5,100.00\nCode Description Qty Unit Rate (₹) Line Total (₹)\n71020 Chest X\u0000Ray \u00002 views) 4 1,800.00 7,200.00\nLaboratory Services - Comprehensive Panel\nCode Description Qty Unit Rate (₹) Line Total (₹)\n80053 Comprehensive Metabolic Panel 8 2,200.00 17,600.00\n85025 Complete Blood Count with Differential 12 950.00 11,400.00\n85610 Prothrombin Time \u0000PT/INR\u0000 6 650.00 3,900.00\n85730 Partial Thromboplastin Time \u0000PTT\u0000 6 750.00 4,500.00\n82565 Creatinine, Blood 10 400.00 4,000.00\n84550 Uric Acid 4 350.00 1,400.00\n82947 Glucose, Blood 15 150.00 2,250.00",
+        "metadata": {
+          "document_type": "invoice",
+          "total_characters": 6212,
+          "processing_timestamp": "2025-09-05T11:02:31.948148",
+          "chunk_size": 980,
+          "created_at": "2025-09-05T11:02:31.948488",
+          "chunk_type": "facility_info"
+        }
+      },
+      {
+        "chunk_index": 2,
+        "content": "85730 Partial Thromboplastin Time \u0000PTT\u0000 6 750.00 4,500.00\n82565 Creatinine, Blood 10 400.00 4,000.00\n84550 Uric Acid 4 350.00 1,400.00\n82947 Glucose, Blood 15 150.00 2,250.00\n84295 Sodium, Blood 8 300.00 2,400.00\n84132 Potassium, Blood 8 300.00 2,400.00\n82435 Chloride, Blood 8 300.00 2,400.00\nAdvanced Diagnostic Imaging\nCode Description Qty Unit Rate (₹) Line Total (₹)\n71260 CT Chest with Contrast 2 15,500.00 31,000.00\n74177 CT Abdomen/Pelvis with Contrast 1 18,750.00 18,750.00\n93306 Echocardiogram Complete 2 8,500.00 17,000.00\n76700 Abdominal Ultrasound Complete 1 4,200.00 4,200.00\n71045 Chest X\u0000Ray Single View 6 900.00 5,400.00\nRespiratory Care & Ventilation\nCode Description Qty Unit Rate (₹) Line Total (₹)\n94660 Continuous Positive Airway Pressure 72 hours 450.00/hr 32,400.00\n31500 Emergency Intubation 1 8,500.00 8,500.00\n94002 Ventilation Management per day 4 12,000.00 48,000.00\n94664 Aerosol/Vapor Inhalation Treatment 24 650.00 15,600.00\nIntensive Care Unit Services",
+        "metadata": {
+          "document_type": "invoice",
+          "total_characters": 6212,
+          "processing_timestamp": "2025-09-05T11:02:31.948148",
+          "chunk_size": 985,
+          "created_at": "2025-09-05T11:02:31.948500",
+          "chunk_type": "procedure_info"
+        }
+      },
+      {
+        "chunk_index": 3,
+        "content": "31500 Emergency Intubation 1 8,500.00 8,500.00\n94002 Ventilation Management per day 4 12,000.00 48,000.00\n94664 Aerosol/Vapor Inhalation Treatment 24 650.00 15,600.00\nIntensive Care Unit Services\nCode Description Days Unit Rate (₹) Line Total (₹)\nICU\u0000SEMPR ICU Semi-Private Room 3 18,500.00 55,500.00\nICU\u0000PVT ICU Private Room 2 25,000.00 50,000.00\n99232 Hospital Visit - Intermediate 6 3,500.00 21,000.00\nRegular Ward Accommodation\nCode Description Days Unit Rate (₹) Line Total (₹)\nRM\u0000PVT Private Room with Attendant 2 8,500.00 17,000.00\nSurgical & Procedural Interventions\nCode Description Qty Unit Rate (₹) Line Total (₹)\n32554 Thoracentesis with Imaging 2 15,500.00 31,000.00\n36556 Central Venous Catheter Insertion 1 12,500.00 12,500.00\n43235 Upper GI Endoscopy Diagnostic 1 18,500.00 18,500.00\nNursing & Ancillary Care\nCode Description Days/Qty Unit Rate (₹) Line Total (₹)\nNSG\u0000ICU ICU Nursing Care \u000024/7\u0000 5 8,500.00 42,500.00\nNSG\u0000WARD General Ward Nursing 2 3,200.00 6,400.00",
+        "metadata": {
+          "document_type": "invoice",
+          "total_characters": 6212,
+          "processing_timestamp": "2025-09-05T11:02:31.948148",
+          "chunk_size": 982,
+          "created_at": "2025-09-05T11:02:31.948511",
+          "chunk_type": "facility_info"
+        }
+      },
+      {
+        "chunk_index": 4,
+        "content": "Nursing & Ancillary Care\nCode Description Days/Qty Unit Rate (₹) Line Total (₹)\nNSG\u0000ICU ICU Nursing Care \u000024/7\u0000 5 8,500.00 42,500.00\nNSG\u0000WARD General Ward Nursing 2 3,200.00 6,400.00\n99374 Care Plan Oversight - Complex 7 2,500.00 17,500.00\nPharmacy & Medical Supplies\nCode Description Qty Unit Rate (₹) Line Total (₹)\nMED\u0000ANTIBX Injectable Antibiotics \u0000Meropenem) 15 vials 2,850.00 42,750.00\nMED\u0000STEROID Methylprednisolone 500mg 10 vials 750.00 7,500.00\nMED\u0000BRONCHO Bronchodilator Medications 12 units 450.00 5,400.00\nMED\u0000ANALG Pain Management Medications 1 8,500.00 8,500.00\nSUP\u0000RESPIR Respiratory Support Supplies 1 15,750.00 15,750.00\nSUP\u0000IV IV Fluids & Administration Sets 25 units 350.00 8,750.00\nSUP\u0000SURGICAL Surgical Supplies & Disposables 1 12,400.00 12,400.00\nConsultation Fees\nCode Description Qty Unit Rate (₹) Line Total (₹)\nCONS\u0000PULM Pulmonology Consultation 4 4,500.00 18,000.00\nCONS\u0000NEPH Nephrology Consultation 3 4,800.00 14,400.00",
+        "metadata": {
+          "document_type": "invoice",
+          "total_characters": 6212,
+          "processing_timestamp": "2025-09-05T11:02:31.948148",
+          "chunk_size": 947,
+          "created_at": "2025-09-05T11:02:31.948519",
+          "chunk_type": "facility_info"
+        }
+      },
+      {
+        "chunk_index": 5,
+        "content": "Consultation Fees\nCode Description Qty Unit Rate (₹) Line Total (₹)\nCONS\u0000PULM Pulmonology Consultation 4 4,500.00 18,000.00\nCONS\u0000NEPH Nephrology Consultation 3 4,800.00 14,400.00\nCONS\u0000CRIT Critical Care Consultation 5 5,500.00 27,500.00\nCONS\u0000CARD Cardiology Consultation 2 4,200.00 8,400.00\nMiscellaneous Charges\nCode Description Qty Unit Rate (₹) Line Total (₹)\nADM\u0000PROC Hospital Administration 1 3,500.00 3,500.00\nBIO\u0000WASTE Bio-Medical Waste Disposal 1 2,150.00 2,150.00\nDOC\u0000PROC Medical Record Processing 1 1,250.00 1,250.00\nFinancial Summary\nSubtotal: ₹847,300.00\nHospital Discount \u00005%\u0000\u0000 -₹42,365.00\nRevised Subtotal: ₹804,935.00\nGST \u0000 5%\u0000 ₹40,246.75\nGrand Total: ₹845,181.75\nInsurance & Payment Information\nPrimary Insurance: CareShield Health Insurance Co.\nPolicy Number: POL\u0000IN\u0000987654\nPre-Authorization Number: AUTH\u0000CS\u00002025\u0000091015\nCashless Limit Applied: ₹650,000.00\nPatient Responsibility:\nDeductible: ₹10,000.00\nCo-pay \u000010%\u0000\u0000 ₹83,518.18\nTotal Patient Payment: ₹93,518.18",
+        "metadata": {
+          "document_type": "invoice",
+          "total_characters": 6212,
+          "processing_timestamp": "2025-09-05T11:02:31.948148",
+          "chunk_size": 979,
+          "created_at": "2025-09-05T11:02:31.948526",
+          "chunk_type": "patient_info"
+        }
+      },
+      {
+        "chunk_index": 6,
+        "content": "Pre-Authorization Number: AUTH\u0000CS\u00002025\u0000091015\nCashless Limit Applied: ₹650,000.00\nPatient Responsibility:\nDeductible: ₹10,000.00\nCo-pay \u000010%\u0000\u0000 ₹83,518.18\nTotal Patient Payment: ₹93,518.18\nInsurance Coverage: ₹751,663.57\nMedical Notes & Documentation\nAdmission Summary:\nPatient presented with severe dyspnea, high fever \u000039.8°C\u0000, and productive cough of 4-day\nduration. Clinical examination revealed bilateral lung consolidation with respiratory distress. Initial\nchest X-ray showed extensive bilateral pneumonia with pleural effusion.\nTreatment Course:\nImmediate intubation and mechanical ventilation were required due to respiratory failure. Patient\nreceived broad-spectrum antibiotics \u0000Meropenem), corticosteroids, and supportive care in ICU.\nThoracentesis performed twice for pleural fluid drainage. Gradual improvement noted after 72\nhours of intensive treatment.\nDischarge Condition:\nPatient stable, breathing independently, vital signs within normal limits. Prescribed oral",
+        "metadata": {
+          "document_type": "invoice",
+          "total_characters": 6212,
+          "processing_timestamp": "2025-09-05T11:02:31.948148",
+          "chunk_size": 979,
+          "created_at": "2025-09-05T11:02:31.948531",
+          "chunk_type": "patient_info"
+        }
+      },
+      {
+        "chunk_index": 7,
+        "content": "hours of intensive treatment.\nDischarge Condition:\nPatient stable, breathing independently, vital signs within normal limits. Prescribed oral\nantibiotics and bronchodilators for home care. Follow-up scheduled in 7 days with pulmonology.\nDischarge Instructions:\n\u0000\u0000\u0000Complete antibiotic course as prescribed\n\u0000\u0000\u0000Use bronchodilator as needed for breathing support\n\u0000\u0000\u0000Monitor temperature and oxygen saturation daily\n\u0000\u0000\u0000Return immediately if breathing difficulty recurs\n\u0000\u0000\u0000Avoid exposure to respiratory irritants\nAuthorization: Dr. Priya Sharma, MD\nDate: September 15, 2025\nDigital Signature: \u0000Verified]",
+        "metadata": {
+          "document_type": "invoice",
+          "total_characters": 6212,
+          "processing_timestamp": "2025-09-05T11:02:31.948148",
+          "chunk_size": 596,
+          "created_at": "2025-09-05T11:02:31.948535",
+          "chunk_type": "patient_info"
+        }
+      }
+    ],
+    "total_chunks": 8,
+    "parser": "basic",
+    "images": []
+  },
+  "882d0ed4a007bc86": {
+    "success": true,
+    "document_id": "70ea8040-e953-43fc-8e90-69ff6556a502",
+    "document_type": "policy",
+    "text": "CareShield Health Insurance Co.\nComprehensive Policy Document\nPolicy Information Summary\nPolicy Number: POL\u0000IN\u0000987654\nPlan: CareShield Plus \u0000Family Floater)\nPolicy Period: 2025\u000004\u000001 to 2026\u000003\u000031\nIssue Date: March 15, 2025\nPolicy Type: Individual Family Floater\nAgent Code: AG\u0000BLR\u00004582\nBranch: Bangalore South\nSection 1\u0000 Policyholder Details\nPrimary Policyholder:\nName: Aarav Mehta\nDate of Birth: July 11, 1992\nAge at Entry: 32 Years\nGender: Male\nOccupation: Senior Software Engineer\nCompany: Tech Solutions Pvt. Ltd.\nAnnual Income: ₹18,50,000\nContact Information:\nPhone: \u000091\u000098\u00007654\u00003210\nEmail: aarav.mehta@example.com\nPermanent Address: 702, Sunshine Residency, Sector 62, Noida 201301, UP\nCommunication Address: Same as Permanent Address\nEmergency Contact:\nName: Rajesh Mehta \u0000Father\u0000\nPhone: \u000091\u000098\u00001122\u00003344\nRelationship: Father\nSection 2\u0000 Insured Members Details\nS.No Name Relationship DOB Age Gender Insured ID Sum Insured\n1 Aarav Mehta Self 11\u000007\u00001992 32 Male CS\u0000IM\u00000001 ₹10,00,000\n2 Riya Mehta Spouse 22\u000003\u00001995 30 Female CS\u0000IM\u00000002 ₹10,00,000\nS.No Name Relationship DOB Age Gender Insured ID Sum Insured\n3 Arjun Mehta Son 15\u000009\u00002022 2 Male CS\u0000IM\u00000003 ₹10,00,000\nFamily Floater Benefit: All members share the total sum insured of ₹10,00,000 annually.\nSection 3\u0000 Plan Benefits & Coverage\n3.1 Core Coverage Benefits\nTotal Sum Insured: ₹10,00,000 per policy year\nIndividual Deductible: ₹10,000 per claim\nFamily Deductible: ₹25,000 per policy year\nCo-payment: 10% of admissible claim amount\nRoom Rent Limit: ₹6,000 per day \u0000Private AC Room)\nICU Rent Limit: ₹12,000 per day\n3.2 Hospitalization Benefits\nIn-Patient Hospitalization: Minimum 24 hours stay required\nDay Care Procedures: 635+ listed procedures covered\nEmergency Treatment: Immediate coverage from day one\nAmbulance Charges: Up to ₹2,000 per hospitalization\nOrgan Transplant: Up to ₹5,00,000 (specific conditions apply)\n3.3 Pre & Post Hospitalization\nPre-Hospitalization: 30 days before admission\nPost-Hospitalization: 60 days after discharge\nDiagnostic Tests: Covered when prescribed by doctor\nPrescription Medicines: Covered as per hospital bills\n3.4 Additional Benefits\nHealth Check-up: ₹3,000 per insured per year (after 2 claim-free years)\nMaternity Coverage: ₹75,000 after 3 years waiting period\nNew Born Baby: Covered from day 1 (up to ₹25,000\u0000\nAyurveda/Homeopathy: Up to ₹25,000 per year\nDomiciliary Treatment: ₹15,000 per year (illness > 3 days)\nSection 4\u0000 Network & Cashless Facilities\n4.1 Network Hospitals\nTotal Network: 8,500+ hospitals across India\nCashless Facility: Available at all network hospitals\nPre-authorization: Mandatory for planned treatments\nEmergency Cases: Intimation within 24 hours\n4.2 Key Network Hospitals in Major Cities\nBangalore:\nManipal Hospital \u0000Whitefield, HAL, Sarjapur)\nNarayana Health \u0000Bommasandra, Electronic City)\nApollo Hospital \u0000Bannerghatta Road)\nFortis Hospital \u0000Cunningham Road)\nColumbia Asia \u0000Sarjapur, Whitefield)\nDelhi/NCR\u0000\nMax Hospital \u0000Saket, Dwarka, Noida)\nFortis Hospital \u0000Gurgaon, Noida)\nApollo Hospital \u0000Delhi, Gurgaon)\nMedanta - The Medicity \u0000Gurgaon)\nMumbai:\nKokilaben Dhirubhai Ambani Hospital\nLilavati Hospital & Research Centre\nHinduja Hospital\nBreach Candy Hospital\nSection 5\u0000 Exclusions & Waiting Periods\n5.1 General Exclusions\nPre-existing diseases: 3 years waiting period\nSpecific diseases: 2 years waiting period (diabetes, hypertension, thyroid)\nMaternity & related complications: 3 years waiting period\nPsychiatric & mental disorders\nCosmetic or plastic surgery (unless medically necessary)\nDental treatment (unless requiring hospitalization)\nVision correction surgeries\nFertility treatments, IVF procedures\n5.2 Permanent Exclusions\nWar, invasion, terrorism related injuries\nIntentional self-injury, suicide attempts\nTreatment outside India\nExperimental or investigational treatments\nTreatment by non-qualified practitioners\nCongenital internal diseases (unless specifically covered)\n5.3 Waiting Periods Summary\nInitial Waiting Period: 30 days (except accidents)\nPre-existing Diseases: 3 years\nSpecific Diseases: 2 years\nMaternity: 3 years from policy inception\nSection 6\u0000 Claims Process & Documentation\n6.1 Cashless Claims Process\n\u0000\u0000\u0000Hospital Admission: Present health card at network hospital\n\u0000\u0000\u0000Pre-authorization: Hospital submits request to TPA\n\u0000\u0000\u0000Approval: Receive approval within 2\u00006 hours\n\u0000\u0000\u0000Treatment: Undergo treatment as per approved estimate\n\u0000\u0000\u0000Discharge: Pay only non-medical expenses and co-payment\n\u0000\u0000\u0000Settlement: Hospital receives payment directly from insurer\n6.2 Reimbursement Claims Process\n\u0000\u0000\u0000Treatment: Get treated at any hospital\n\u0000\u0000\u0000Intimation: Inform within 24 hours for emergency, before admission for planned\n\u0000\u0000\u0000Documentation: Collect all required documents\n\u0000\u0000\u0000Submission: Submit claim within 30 days of discharge\n\u0000\u0000\u0000Processing: Claim processed within 15\u000020 working days\n\u0000\u0000\u0000Settlement: Amount credited to bank account\n6.3 Required Documents for Claims\nOriginal Documents:\nCompleted claim form (signed by patient/attendant)\nOriginal hospital bills and receipts\nDetailed break-up of hospital bills\nDischarge summary with diagnosis and treatment details\nInvestigation reports, X-rays, MRI, CT scan reports\nPrescription and pharmacy bills\nDoctor's consultation receipts\nAdditional Documents (if applicable):\nPolice FIR copy (for accident cases)\nEmployer certificate (for accidents during work)\nMLR report (for road accidents)\nCase papers and surgical notes (for surgeries)\nHistopathology/biopsy reports (for cancer cases)\nPre-authorization approval copy (if obtained)\n6.4 Serious Illness Documentation Requirements\nFor Critical Illness Claims \u0000Cancer, Heart Disease, Kidney Failure, etc.):\nSpecialist doctor's certificate with detailed diagnosis\nComplete medical history and treatment records\nBiopsy reports and staging information (for cancer)\nAngiography/Echo reports (for heart conditions)\nDialysis records and kidney function tests (for renal conditions)\nSecond medical opinion (may be required)\nOngoing treatment plan and cost estimates\nSection 7\u0000 Premium & Payment Details\n7.1 Premium Structure\nBase Premium: ₹18,999\nService Tax \u000018% GST\u0000\u0000 ₹3,420\nTotal Premium: ₹21,499\nPayment Mode: Annual\nPayment Date: March 20, 2025\nNext Due Date: March 20, 2026\n7.2 Premium Payment Options\nOnline Payment: Net banking, Credit/Debit card, UPI\nOffline Payment: Cheque, DD, Cash at branch\nAuto-debit: ECS, NACH mandate available\nInstallments: Not available for this plan\n7.3 Grace Period & Revival\nGrace Period: 30 days from due date\nRevival Period: 2 years from policy lapse\nMedical Tests: May be required for revival\nPenalty: 25% additional premium for late renewal\nSection 8\u0000 Policy Terms & Conditions\n8.1 General Terms\nPolicy Territory: India only\nCurrency: Indian Rupees \u0000INR\u0000\nAge Limits: Entry age 18\u000065, renewal up to 80 years\nFree Look Period: 15 days from policy receipt\nPortability: Available as per IRDAI guidelines\nGeographical Coverage: All of India\n8.2 Important Policy Conditions\nMaterial Information: All information provided must be true and complete\nPre-policy Medical Checkup: Required for sum insured > ₹5 lakhs for age > 45\nLifestyle Habits: Non-smoker rates applied (as declared)\nMultiple Policies: Other insurance policies must be disclosed\nClaims History: Previous claims experience affects renewals\n8.3 Grievance Redressal\nLevel 1 \u0000 Customer Care:\nPhone: 1800\u0000123\u00004567 \u0000Toll Free)\nEmail: care@careshield.com\nOnline: www.careshield.com/grievances\nLevel 2 \u0000 Grievance Officer:\nMr. Prakash Kumar\nPhone: \u000091\u000080\u00004567\u00008901\nEmail: grievances@careshield.com\nLevel 3 \u0000 Insurance Ombudsman:\nAs per IRDAI appointed ombudsman for respective region\nSection 9\u0000 Contact Information & Important Numbers\n9.1 24\u00007 Emergency Services\nClaim Intimation: 1800\u0000234\u00005678\nPre-authorization: 1800\u0000345\u00006789\nMedical Emergency: 1800\u0000456\u00007890\nCustomer Service: 1800\u0000567\u00008901\n9.2 Regional Offices\nBangalore \u0000Servicing Office):\nCareShield House, 4th Floor\n#234, Brigade Road, Bangalore 560025\nPhone: \u000091\u000080\u00002234\u00005678\nDelhi \u0000Regional Office):\nPlot No. 45, Sector 32\nGurgaon 122001, Haryana\nPhone: \u000091\u0000124\u0000234\u00005678\n9.3 Third Party Administrator \u0000TPA\u0000\nMedAssist India TPA Pvt. Ltd.\nCorporate Office: Mumbai\nClaim Processing: Bangalore\nPhone: 1800\u0000678\u00009012\nEmail: claims@medassist.com\nSection 10\u0000 Regulatory Information & Compliance\n10.1 Regulatory Details\nIRDAI Registration: 142\nCIN\u0000 U66010KA2010PLC057829\nGSTIN\u0000 29AABCC1234C1Z5\nPAN\u0000 AABCC1234C\n10.2 Statutory Requirements\nPolicy issued as per Insurance Act 1938 and IRDAI regulations\nSolvency ratio maintained as per regulatory requirements\nAll claims settled as per IRDAI claim settlement guidelines\nPolicy wording approved by IRDAI\n10.3 Important Disclaimers\nThis policy is subject to terms, conditions, and exclusions mentioned herein\nCoverage is subject to policy limits and sub-limits as specified\nPre-existing disease coverage subject to waiting period completion\nGeographic restrictions apply for treatment outside India\nPolicy Issued Date: March 15, 2025\nPolicy Effective Date: April 1, 2025\nPolicy Expiry Date: March 31, 2026\nAuthorized Signatory\nCareShield Health Insurance Co.\nThis is a computer-generated document and does not require signature\nImportant: Please read all terms and conditions carefully. Contact customer service for any\nclarifications. Keep this policy document safe as it may be required during claims.\n",
+    "chunks": [
+      {
+        "chunk_index": 0,
+        "content": "CareShield Health Insurance Co.\nComprehensive Policy Document\nPolicy Information Summary\nPolicy Number: POL\u0000IN\u0000987654\nPlan: CareShield Plus \u0000Family Floater)\nPolicy Period: 2025\u000004\u000001 to 2026\u000003\u000031\nIssue Date: March 15, 2025\nPolicy Type: Individual Family Floater\nAgent Code: AG\u0000BLR\u00004582\nBranch: Bangalore South\nSection 1\u0000 Policyholder Details\nPrimary Policyholder:\nName: Aarav Mehta\nDate of Birth: July 11, 1992\nAge at Entry: 32 Years\nGender: Male\nOccupation: Senior Software Engineer\nCompany: Tech Solutions Pvt. Ltd.\nAnnual Income: ₹18,50,000\nContact Information:\nPhone: \u000091\u000098\u00007654\u00003210\nEmail: aarav.mehta@example.com\nPermanent Address: 702, Sunshine Residency, Sector 62, Noida 201301, UP\nCommunication Address: Same as Permanent Address\nEmergency Contact:\nName: Rajesh Mehta \u0000Father\u0000\nPhone: \u000091\u000098\u00001122\u00003344\nRelationship: Father\nSection 2\u0000 Insured Members Details\nS.No Name Relationship DOB Age Gender Insured ID Sum Insured\n1 Aarav Mehta Self 11\u000007\u00001992 32 Male CS\u0000IM\u00000001 ₹10,00,000",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 989,
+          "created_at": "2025-09-05T11:10:13.663127",
+          "chunk_type": "policy_info"
+        }
+      },
+      {
+        "chunk_index": 1,
+        "content": "Relationship: Father\nSection 2\u0000 Insured Members Details\nS.No Name Relationship DOB Age Gender Insured ID Sum Insured\n1 Aarav Mehta Self 11\u000007\u00001992 32 Male CS\u0000IM\u00000001 ₹10,00,000\n2 Riya Mehta Spouse 22\u000003\u00001995 30 Female CS\u0000IM\u00000002 ₹10,00,000\nS.No Name Relationship DOB Age Gender Insured ID Sum Insured\n3 Arjun Mehta Son 15\u000009\u00002022 2 Male CS\u0000IM\u00000003 ₹10,00,000\nFamily Floater Benefit: All members share the total sum insured of ₹10,00,000 annually.\nSection 3\u0000 Plan Benefits & Coverage\n3.1 Core Coverage Benefits\nTotal Sum Insured: ₹10,00,000 per policy year\nIndividual Deductible: ₹10,000 per claim\nFamily Deductible: ₹25,000 per policy year\nCo-payment: 10% of admissible claim amount\nRoom Rent Limit: ₹6,000 per day \u0000Private AC Room)\nICU Rent Limit: ₹12,000 per day\n3.2 Hospitalization Benefits\nIn-Patient Hospitalization: Minimum 24 hours stay required\nDay Care Procedures: 635+ listed procedures covered\nEmergency Treatment: Immediate coverage from day one",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 957,
+          "created_at": "2025-09-05T11:10:13.663139",
+          "chunk_type": "coverage_info"
+        }
+      },
+      {
+        "chunk_index": 2,
+        "content": "3.2 Hospitalization Benefits\nIn-Patient Hospitalization: Minimum 24 hours stay required\nDay Care Procedures: 635+ listed procedures covered\nEmergency Treatment: Immediate coverage from day one\nAmbulance Charges: Up to ₹2,000 per hospitalization\nOrgan Transplant: Up to ₹5,00,000 (specific conditions apply)\n3.3 Pre & Post Hospitalization\nPre-Hospitalization: 30 days before admission\nPost-Hospitalization: 60 days after discharge\nDiagnostic Tests: Covered when prescribed by doctor\nPrescription Medicines: Covered as per hospital bills\n3.4 Additional Benefits\nHealth Check-up: ₹3,000 per insured per year (after 2 claim-free years)\nMaternity Coverage: ₹75,000 after 3 years waiting period\nNew Born Baby: Covered from day 1 (up to ₹25,000\u0000\nAyurveda/Homeopathy: Up to ₹25,000 per year\nDomiciliary Treatment: ₹15,000 per year (illness > 3 days)\nSection 4\u0000 Network & Cashless Facilities\n4.1 Network Hospitals\nTotal Network: 8,500+ hospitals across India",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 949,
+          "created_at": "2025-09-05T11:10:13.663148",
+          "chunk_type": "coverage_info"
+        }
+      },
+      {
+        "chunk_index": 3,
+        "content": "Domiciliary Treatment: ₹15,000 per year (illness > 3 days)\nSection 4\u0000 Network & Cashless Facilities\n4.1 Network Hospitals\nTotal Network: 8,500+ hospitals across India\nCashless Facility: Available at all network hospitals\nPre-authorization: Mandatory for planned treatments\nEmergency Cases: Intimation within 24 hours\n4.2 Key Network Hospitals in Major Cities\nBangalore:\nManipal Hospital \u0000Whitefield, HAL, Sarjapur)\nNarayana Health \u0000Bommasandra, Electronic City)\nApollo Hospital \u0000Bannerghatta Road)\nFortis Hospital \u0000Cunningham Road)\nColumbia Asia \u0000Sarjapur, Whitefield)\nDelhi/NCR\u0000\nMax Hospital \u0000Saket, Dwarka, Noida)\nFortis Hospital \u0000Gurgaon, Noida)\nApollo Hospital \u0000Delhi, Gurgaon)\nMedanta - The Medicity \u0000Gurgaon)\nMumbai:\nKokilaben Dhirubhai Ambani Hospital\nLilavati Hospital & Research Centre\nHinduja Hospital\nBreach Candy Hospital\nSection 5\u0000 Exclusions & Waiting Periods\n5.1 General Exclusions\nPre-existing diseases: 3 years waiting period",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 942,
+          "created_at": "2025-09-05T11:10:13.663155",
+          "chunk_type": "general_info"
+        }
+      },
+      {
+        "chunk_index": 4,
+        "content": "Lilavati Hospital & Research Centre\nHinduja Hospital\nBreach Candy Hospital\nSection 5\u0000 Exclusions & Waiting Periods\n5.1 General Exclusions\nPre-existing diseases: 3 years waiting period\nSpecific diseases: 2 years waiting period (diabetes, hypertension, thyroid)\nMaternity & related complications: 3 years waiting period\nPsychiatric & mental disorders\nCosmetic or plastic surgery (unless medically necessary)\nDental treatment (unless requiring hospitalization)\nVision correction surgeries\nFertility treatments, IVF procedures\n5.2 Permanent Exclusions\nWar, invasion, terrorism related injuries\nIntentional self-injury, suicide attempts\nTreatment outside India\nExperimental or investigational treatments\nTreatment by non-qualified practitioners\nCongenital internal diseases (unless specifically covered)\n5.3 Waiting Periods Summary\nInitial Waiting Period: 30 days (except accidents)\nPre-existing Diseases: 3 years\nSpecific Diseases: 2 years\nMaternity: 3 years from policy inception",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 976,
+          "created_at": "2025-09-05T11:10:13.663169",
+          "chunk_type": "general_info"
+        }
+      },
+      {
+        "chunk_index": 5,
+        "content": "5.3 Waiting Periods Summary\nInitial Waiting Period: 30 days (except accidents)\nPre-existing Diseases: 3 years\nSpecific Diseases: 2 years\nMaternity: 3 years from policy inception\nSection 6\u0000 Claims Process & Documentation\n6.1 Cashless Claims Process\n\u0000\u0000\u0000Hospital Admission: Present health card at network hospital\n\u0000\u0000\u0000Pre-authorization: Hospital submits request to TPA\n\u0000\u0000\u0000Approval: Receive approval within 2\u00006 hours\n\u0000\u0000\u0000Treatment: Undergo treatment as per approved estimate\n\u0000\u0000\u0000Discharge: Pay only non-medical expenses and co-payment\n\u0000\u0000\u0000Settlement: Hospital receives payment directly from insurer\n6.2 Reimbursement Claims Process\n\u0000\u0000\u0000Treatment: Get treated at any hospital\n\u0000\u0000\u0000Intimation: Inform within 24 hours for emergency, before admission for planned\n\u0000\u0000\u0000Documentation: Collect all required documents\n\u0000\u0000\u0000Submission: Submit claim within 30 days of discharge\n\u0000\u0000\u0000Processing: Claim processed within 15\u000020 working days\n\u0000\u0000\u0000Settlement: Amount credited to bank account\n6.3 Required Documents for Claims",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 990,
+          "created_at": "2025-09-05T11:10:13.663183",
+          "chunk_type": "coverage_info"
+        }
+      },
+      {
+        "chunk_index": 6,
+        "content": "\u0000\u0000\u0000Submission: Submit claim within 30 days of discharge\n\u0000\u0000\u0000Processing: Claim processed within 15\u000020 working days\n\u0000\u0000\u0000Settlement: Amount credited to bank account\n6.3 Required Documents for Claims\nOriginal Documents:\nCompleted claim form (signed by patient/attendant)\nOriginal hospital bills and receipts\nDetailed break-up of hospital bills\nDischarge summary with diagnosis and treatment details\nInvestigation reports, X-rays, MRI, CT scan reports\nPrescription and pharmacy bills\nDoctor's consultation receipts\nAdditional Documents (if applicable):\nPolice FIR copy (for accident cases)\nEmployer certificate (for accidents during work)\nMLR report (for road accidents)\nCase papers and surgical notes (for surgeries)\nHistopathology/biopsy reports (for cancer cases)\nPre-authorization approval copy (if obtained)\n6.4 Serious Illness Documentation Requirements\nFor Critical Illness Claims \u0000Cancer, Heart Disease, Kidney Failure, etc.):\nSpecialist doctor's certificate with detailed diagnosis",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 983,
+          "created_at": "2025-09-05T11:10:13.663190",
+          "chunk_type": "coverage_info"
+        }
+      },
+      {
+        "chunk_index": 7,
+        "content": "6.4 Serious Illness Documentation Requirements\nFor Critical Illness Claims \u0000Cancer, Heart Disease, Kidney Failure, etc.):\nSpecialist doctor's certificate with detailed diagnosis\nComplete medical history and treatment records\nBiopsy reports and staging information (for cancer)\nAngiography/Echo reports (for heart conditions)\nDialysis records and kidney function tests (for renal conditions)\nSecond medical opinion (may be required)\nOngoing treatment plan and cost estimates\nSection 7\u0000 Premium & Payment Details\n7.1 Premium Structure\nBase Premium: ₹18,999\nService Tax \u000018% GST\u0000\u0000 ₹3,420\nTotal Premium: ₹21,499\nPayment Mode: Annual\nPayment Date: March 20, 2025\nNext Due Date: March 20, 2026\n7.2 Premium Payment Options\nOnline Payment: Net banking, Credit/Debit card, UPI\nOffline Payment: Cheque, DD, Cash at branch\nAuto-debit: ECS, NACH mandate available\nInstallments: Not available for this plan\n7.3 Grace Period & Revival\nGrace Period: 30 days from due date\nRevival Period: 2 years from policy lapse",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 998,
+          "created_at": "2025-09-05T11:10:13.663197",
+          "chunk_type": "terms_info"
+        }
+      },
+      {
+        "chunk_index": 8,
+        "content": "Auto-debit: ECS, NACH mandate available\nInstallments: Not available for this plan\n7.3 Grace Period & Revival\nGrace Period: 30 days from due date\nRevival Period: 2 years from policy lapse\nMedical Tests: May be required for revival\nPenalty: 25% additional premium for late renewal\nSection 8\u0000 Policy Terms & Conditions\n8.1 General Terms\nPolicy Territory: India only\nCurrency: Indian Rupees \u0000INR\u0000\nAge Limits: Entry age 18\u000065, renewal up to 80 years\nFree Look Period: 15 days from policy receipt\nPortability: Available as per IRDAI guidelines\nGeographical Coverage: All of India\n8.2 Important Policy Conditions\nMaterial Information: All information provided must be true and complete\nPre-policy Medical Checkup: Required for sum insured > ₹5 lakhs for age > 45\nLifestyle Habits: Non-smoker rates applied (as declared)\nMultiple Policies: Other insurance policies must be disclosed\nClaims History: Previous claims experience affects renewals\n8.3 Grievance Redressal\nLevel 1 \u0000 Customer Care:",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 983,
+          "created_at": "2025-09-05T11:10:13.663210",
+          "chunk_type": "coverage_info"
+        }
+      },
+      {
+        "chunk_index": 9,
+        "content": "Multiple Policies: Other insurance policies must be disclosed\nClaims History: Previous claims experience affects renewals\n8.3 Grievance Redressal\nLevel 1 \u0000 Customer Care:\nPhone: 1800\u0000123\u00004567 \u0000Toll Free)\nEmail: care@careshield.com\nOnline: www.careshield.com/grievances\nLevel 2 \u0000 Grievance Officer:\nMr. Prakash Kumar\nPhone: \u000091\u000080\u00004567\u00008901\nEmail: grievances@careshield.com\nLevel 3 \u0000 Insurance Ombudsman:\nAs per IRDAI appointed ombudsman for respective region\nSection 9\u0000 Contact Information & Important Numbers\n9.1 24\u00007 Emergency Services\nClaim Intimation: 1800\u0000234\u00005678\nPre-authorization: 1800\u0000345\u00006789\nMedical Emergency: 1800\u0000456\u00007890\nCustomer Service: 1800\u0000567\u00008901\n9.2 Regional Offices\nBangalore \u0000Servicing Office):\nCareShield House, 4th Floor\n#234, Brigade Road, Bangalore 560025\nPhone: \u000091\u000080\u00002234\u00005678\nDelhi \u0000Regional Office):\nPlot No. 45, Sector 32\nGurgaon 122001, Haryana\nPhone: \u000091\u0000124\u0000234\u00005678\n9.3 Third Party Administrator \u0000TPA\u0000\nMedAssist India TPA Pvt. Ltd.\nCorporate Office: Mumbai",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 994,
+          "created_at": "2025-09-05T11:10:13.663217",
+          "chunk_type": "general_info"
+        }
+      },
+      {
+        "chunk_index": 10,
+        "content": "Delhi \u0000Regional Office):\nPlot No. 45, Sector 32\nGurgaon 122001, Haryana\nPhone: \u000091\u0000124\u0000234\u00005678\n9.3 Third Party Administrator \u0000TPA\u0000\nMedAssist India TPA Pvt. Ltd.\nCorporate Office: Mumbai\nClaim Processing: Bangalore\nPhone: 1800\u0000678\u00009012\nEmail: claims@medassist.com\nSection 10\u0000 Regulatory Information & Compliance\n10.1 Regulatory Details\nIRDAI Registration: 142\nCIN\u0000 U66010KA2010PLC057829\nGSTIN\u0000 29AABCC1234C1Z5\nPAN\u0000 AABCC1234C\n10.2 Statutory Requirements\nPolicy issued as per Insurance Act 1938 and IRDAI regulations\nSolvency ratio maintained as per regulatory requirements\nAll claims settled as per IRDAI claim settlement guidelines\nPolicy wording approved by IRDAI\n10.3 Important Disclaimers\nThis policy is subject to terms, conditions, and exclusions mentioned herein\nCoverage is subject to policy limits and sub-limits as specified\nPre-existing disease coverage subject to waiting period completion\nGeographic restrictions apply for treatment outside India\nPolicy Issued Date: March 15, 2025",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 994,
+          "created_at": "2025-09-05T11:10:13.663229",
+          "chunk_type": "coverage_info"
+        }
+      },
+      {
+        "chunk_index": 11,
+        "content": "Pre-existing disease coverage subject to waiting period completion\nGeographic restrictions apply for treatment outside India\nPolicy Issued Date: March 15, 2025\nPolicy Effective Date: April 1, 2025\nPolicy Expiry Date: March 31, 2026\nAuthorized Signatory\nCareShield Health Insurance Co.\nThis is a computer-generated document and does not require signature\nImportant: Please read all terms and conditions carefully. Contact customer service for any\nclarifications. Keep this policy document safe as it may be required during claims.",
+        "metadata": {
+          "document_type": "policy",
+          "total_characters": 9320,
+          "processing_timestamp": "2025-09-05T11:10:13.662713",
+          "chunk_size": 529,
+          "created_at": "2025-09-05T11:10:13.663235",
+          "chunk_type": "coverage_info"
+        }
+      }
+    ],
+    "total_chunks": 12,
+    "parser": "basic",
+    "images": []
   }
 }
