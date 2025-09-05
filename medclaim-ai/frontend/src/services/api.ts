@@ -200,6 +200,14 @@ export const claimAPI = {
     });
     return response.data;
   },
+  updateForm: async (sessionId: string, documentIds: string[] = [], formData: any = null) => {
+    const response = await api.post('/api/claims/update-form', {
+      session_id: sessionId,
+      document_ids: documentIds,
+      form_data: formData,
+    });
+    return response.data;
+  },
 
   submit: async (claimId: string, approvedData: any) => {
     const response = await api.post('/api/claims/submit', {

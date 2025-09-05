@@ -841,7 +841,7 @@ class AgentService:
                 "content": f"Agent error: {str(e)}"
             }
 
-    async def generate_synthetic_claim_form(self, session_id: str, db: Session, template_url: str = None, document_ids: List[str] = None) -> Dict[str, Any]:
+    async def generate_synthetic_claim_form(self, session_id: str, db: Session, template_url: str = None, document_ids: List[str] = None, form_data: Dict[str, Any] = None) -> Dict[str, Any]:
         """Generate a synthetic claim form similar to popular vendor forms."""
         try:
             # Get user documents (filter by selected document IDs if provided)
@@ -938,6 +938,10 @@ class AgentService:
                     "bank_name": ""
                 }
             }
+            
+            # Override with provided form data if available
+            if form_data:
+                synthetic_form_data.update(form_data)
             
             # Generate HTML preview
             preview_html = self._generate_synthetic_form_html(synthetic_form_data)

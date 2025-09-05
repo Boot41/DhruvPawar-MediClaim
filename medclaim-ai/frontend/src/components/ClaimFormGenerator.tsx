@@ -116,6 +116,39 @@ const ClaimFormGenerator: React.FC = () => {
       ...prev,
       [field]: value
     }));
+    
+    // Update the claim form preview with new data
+    if (claimFormPreview) {
+      setClaimFormPreview({
+        ...claimFormPreview,
+        form_data: {
+          ...claimFormPreview.form_data,
+          [field]: value
+        }
+      });
+    }
+  };
+
+  const regeneratePDF = async () => {
+    if (!sessionId) {
+      setError('No session available');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Use the update form API to regenerate with current form data
+      const result = await claimAPI.updateForm(sessionId, selectedDocuments, formData);
+      
+      setClaimFormPreview(result);
+      setFormData(result.form_data);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Failed to regenerate PDF');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const submitClaim = async () => {
@@ -383,6 +416,95 @@ const ClaimFormGenerator: React.FC = () => {
                 ))}
               </ul>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Missing Fields Input Form */}
+      {claimFormPreview.missing_fields && claimFormPreview.missing_fields.length > 0 && (
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-secondary-900">Fill Missing Information</h3>
+            <button
+              onClick={regeneratePDF}
+              disabled={loading}
+              className="btn-primary text-sm"
+            >
+              {loading ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  Updating PDF...
+                </>
+              ) : (
+                <>
+                  <Edit3 className="w-4 h-4 mr-2" />
+                  Update PDF
+                </>
+              )}
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {claimFormPreview.missing_fields.map((field: string, index: number) => {
+              const fieldKey = field.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+              const fieldValue = formData?.[fieldKey] || '';
+              
+              return (
+                <div key={index}>
+                  <label className="block text-sm font-medium text-secondary-700 mb-1">
+                    {field}
+                  </label>
+                  {fieldKey.includes('date') ? (
+                    <input
+                      type="date"
+                      value={fieldValue}
+                      onChange={(e) => handleFieldChange(fieldKey, e.target.value)}
+                      className="input-field"
+                      placeholder={`Enter ${field.toLowerCase()}`}
+                    />
+                  ) : fieldKey.includes('amount') || fieldKey.includes('number') ? (
+                    <input
+                      type="number"
+                      value={fieldValue}
+                      onChange={(e) => handleFieldChange(fieldKey, e.target.value)}
+                      className="input-field"
+                      placeholder={`Enter ${field.toLowerCase()}`}
+                    />
+                  ) : fieldKey.includes('email') ? (
+                    <input
+                      type="email"
+                      value={fieldValue}
+                      onChange={(e) => handleFieldChange(fieldKey, e.target.value)}
+                      className="input-field"
+                      placeholder={`Enter ${field.toLowerCase()}`}
+                    />
+                  ) : fieldKey.includes('phone') || fieldKey.includes('contact') ? (
+                    <input
+                      type="tel"
+                      value={fieldValue}
+                      onChange={(e) => handleFieldChange(fieldKey, e.target.value)}
+                      className="input-field"
+                      placeholder={`Enter ${field.toLowerCase()}`}
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      value={fieldValue}
+                      onChange={(e) => handleFieldChange(fieldKey, e.target.value)}
+                      className="input-field"
+                      placeholder={`Enter ${field.toLowerCase()}`}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-blue-800 text-sm">
+              <CheckCircle className="w-4 h-4 inline mr-2" />
+              Fill in the missing information above and click "Update PDF" to regenerate the form with your data.
+            </p>
           </div>
         </div>
       )}

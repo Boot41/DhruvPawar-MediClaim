@@ -99,6 +99,7 @@ class SyntheticFormRequest(BaseModel):
     session_id: str
     document_ids: Optional[List[str]] = None  # Selected document IDs
     template_url: Optional[str] = None  # Reference URL for form structure
+    form_data: Optional[Dict[str, Any]] = None  # Updated form data
 
 class VendorFormRequest(BaseModel):
     session_id: str

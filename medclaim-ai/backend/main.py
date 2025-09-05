@@ -424,6 +424,32 @@ async def generate_vendor_claim_form(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/claims/update-form", response_model=ClaimFormPreview)
+async def update_claim_form(
+    request: SyntheticFormRequest,
+    current_user: User = Depends(require_active_user),
+    db: Session = Depends(get_db)
+):
+    """Update claim form with new data and regenerate PDF."""
+    try:
+        result = await agent_service.generate_synthetic_claim_form(
+            request.session_id, db, request.template_url, request.document_ids, request.form_data
+        )
+        
+        if result.get("success"):
+            return ClaimFormPreview(
+                form_data=result["form_data"],
+                preview_html=result["preview_html"],
+                missing_fields=result["missing_fields"],
+                pdf_path=result.get("pdf_path"),
+                pdf_filename=result.get("pdf_filename")
+            )
+        else:
+            raise HTTPException(status_code=500, detail=result.get("error"))
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/claims/submit", response_model=SuccessResponse)
 async def submit_claim(
     claim_data: ClaimSubmission,
